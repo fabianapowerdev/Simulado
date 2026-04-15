@@ -11,7 +11,8 @@ O objetivo é oferecer uma experiência prática de estudo, combinando **modo si
 ## 🚀 Acesse o simulador online
 
 👉 **Link público:**  
-https://fabianapowerdev.github.io/Simulado/index.html
+[https://SEU-USUARIO.github.io/simulado-ab900/](https://fabianapowerdev.github.io/Simulado/index.html)
+
 
 
 ---
