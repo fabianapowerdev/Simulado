@@ -18,7 +18,7 @@ const PASSING_SCORE = 700; // >= 700 passa
 /* ============================
    TEMPO DA PROVA
 ============================ */
-const EXAM_MINUTES = 15;
+const EXAM_MINUTES = 40;
 
 /* ============================
    EMBARALHAR?
