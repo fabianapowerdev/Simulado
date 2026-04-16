@@ -1,24 +1,18 @@
 /* =========================================================
    Simulado AB-900 — 3 páginas (Home / Simulado / Prova)
-   - index.html: links para os modos
+   - index.html: links para os modos (com seletor de quantidade)
    - simulado.html: modo estudo (com explicação)
    - prova.html: modo prova (com tempo e nota final + popup)
 ========================================================= */
 
 /* ============================
    CONFIGURAÇÃO DE PONTUAÇÃO (estilo Microsoft)
-   - 50 questões
-   - 20 pontos por questão = 1000 pontos
-   - passa com >= 700
+   - Escala fixa de 1000 pontos
+   - Passa com >= 700
+   - Pontos por questão = 1000 / quantidade selecionada
 ============================ */
-const TOTAL_QUESTIONS_EXPECTED = 50;
-const POINTS_PER_QUESTION = 20;
+const MAX_SCORE = 1000;
 const PASSING_SCORE = 700; // >= 700 passa
-
-/* ============================
-   TEMPO DA PROVA
-============================ */
-const EXAM_MINUTES = 40;
 
 /* ============================
    EMBARALHAR?
@@ -27,20 +21,21 @@ const SHUFFLE_QUESTIONS = true;
 const SHUFFLE_OPTIONS = false;
 
 /* ============================
-   BANCO DE QUESTÕES
-   Formato:
-   {
-     question: "texto",
-     options: ["A", "B", "C", "D"],
-     answerIndex: 0..3,
-     explanation: "texto"
-   }
+   LER QUANTIDADE DA URL
+============================ */
+function getSelectedQty() {
+  const params = new URLSearchParams(window.location.search);
+  const qty = parseInt(params.get("qty"));
+  if (isNaN(qty) || qty <= 0) return QUESTIONS.length; // padrão: todas
+  return Math.min(qty, QUESTIONS.length);
+}
 
-   ✅ Coloque TODAS as 50 questões aqui dentro.
+/* ============================
+   BANCO DE QUESTÕES (222 questões)
 ============================ */
 const QUESTIONS = [
-  // Domínio 1 — Microsoft 365: objetos, serviços e fundamentos de segurança
-  {
+ 
+{
     question: "Qual é o “objeto” mais básico para conceder acesso a serviços do Microsoft 365?",
     options: ["Site do SharePoint", "Usuário", "Biblioteca de documentos", "Canal do Teams"],
     answerIndex: 1,
@@ -648,8 +643,1756 @@ const QUESTIONS = [
     ],
     answerIndex: 1,
     explanation: "Pay-as-you-go é modelo de billing (cobrança). Ele não substitui permissões (Entra/SharePoint) nem governança (Purview). A organização ainda precisa gerir acesso e proteger dados."
-  }
+  },
+    {
+    question: "Sua empresa quer liberar Microsoft 365 Copilot Chat para um piloto de 200 pessoas sem comprar licença por usuário. O time financeiro exige rastrear custos por departamento e ter a opção de desligar o serviço se necessário. Qual é a abordagem MAIS adequada?",
+    options: [
+      "Comprar licenças Microsoft 365 Copilot para todos e filtrar relatórios por departamento",
+      "Habilitar pay-as-you-go com billing policy vinculada a uma assinatura Azure e escopo por grupo/departamento",
+      "Ativar DLP no Purview para reduzir custo e automaticamente aplicar cobrança por mensagem",
+      "Configurar Conditional Access e isso habilita cobrança por consumo automaticamente"
+    ],
+    answerIndex: 1,
+    explanation: "Pay-as-you-go foi desenhado para permitir acesso baseado em consumo sem licença completa por usuário, com governança de custos via billing policy conectada a uma assinatura Azure e escopo de usuários (ex.: grupos). DLP e Conditional Access são controles de segurança/compliance, não mecanismos de cobrança."
+  },
+  {
+    question: "Ao configurar pay-as-you-go para Copilot, o admin recebe erro de permissão ao selecionar a assinatura no assistente de billing policy. Qual requisito costuma estar faltando nesse cenário?",
+    options: [
+      "O admin não tem role de Exchange Administrator",
+      "O admin não tem permissão Owner/Contributor na assinatura/resource group do Azure",
+      "O admin não possui licença E5 Compliance",
+      "O admin não está usando VPN corporativa"
+    ],
+    answerIndex: 1,
+    explanation: "A configuração de pay-as-you-go exige permissões adequadas no Azure (Owner/Contributor) na assinatura e no resource group associado. Roles de workload (Exchange) e VPN não são pré-requisitos do processo."
+  },
+  {
+    question: "Você precisa habilitar pay-as-you-go apenas para um conjunto específico de usuários. Qual decisão de configuração atende melhor ao requisito sem expandir acesso indevidamente?",
+    options: [
+      "Escolher 'All users' no escopo da billing policy",
+      "Escolher 'Specific group' no escopo da billing policy e associar o grupo correto",
+      "Criar um canal no Teams e pedir para só esse público usar",
+      "Colocar os usuários em um site SharePoint separado e isso limita automaticamente o Copilot"
+    ],
+    answerIndex: 1,
+    explanation: "O controle de escopo em pay-as-you-go é feito pela billing policy, escolhendo o conjunto de usuários (idealmente por grupo). Comunicação no Teams não aplica controle técnico, e o SharePoint não é o mecanismo de escopo do billing."
+  },
+  {
+    question: "Durante a criação de billing policy, você precisa escolher o 'Region' e o time de segurança pergunta o que isso afeta. Qual resposta (alto nível) é MAIS correta?",
+    options: [
+      "Define a região onde dados de uso/tenant ID e metadados de consumo são armazenados para o billing",
+      "Define a região onde os emails do Exchange serão roteados",
+      "Define a região onde os arquivos do OneDrive serão criptografados",
+      "Define a região onde as políticas do Entra ID serão aplicadas"
+    ],
+    answerIndex: 0,
+    explanation: "No contexto de billing policy/pay-as-you-go, a região é uma escolha administrativa relacionada ao armazenamento/registro de dados de uso e metadados de consumo. Não controla roteamento de email, criptografia de OneDrive ou aplicação de políticas do Entra."
+  },
+  {
+    question: "Um gestor acredita que pay-as-you-go 'substitui permissões' porque agora existe cobrança. Qual afirmação corrige melhor esse entendimento?",
+    options: [
+      "Correto: o billing determina o que o usuário pode acessar",
+      "Incorreto: billing é só cobrança; permissões e governança continuam valendo (Entra/SharePoint/Purview)",
+      "Correto: pay-as-you-go dá acesso total e o custo limita o uso",
+      "Incorreto: pay-as-you-go desativa Purview para reduzir custo"
+    ],
+    answerIndex: 1,
+    explanation: "Pay-as-you-go é modelo de cobrança. Ele não altera o modelo de segurança: acesso continua regido por permissões (Entra/SharePoint) e políticas de governança (Purview)."
+  },
+  {
+    question: "Um admin quer reduzir risco de 'overspending' em pay-as-you-go e também melhorar rastreabilidade de custos. Qual combinação é MAIS coerente com governança de billing?",
+    options: [
+      "Criar billing policy por departamento e usar budget/monitoramento de uso por policy",
+      "Desativar auditoria do Purview para evitar consumo",
+      "Mover todos os arquivos para fora do Microsoft 365",
+      "Habilitar SSO para reduzir cobrança por mensagem"
+    ],
+    answerIndex: 0,
+    explanation: "A prática madura é dividir por billing policies (por área/centro de custo) e monitorar consumo, aplicando budgets quando disponível. Auditoria/SSO não são mecanismos de redução direta de consumo do Copilot."
+  },
 
+  // ---- COPILOT / PROMPTS / GOVERNANÇA (HARD) ----
+  {
+    question: "Você quer reduzir o risco de usuários solicitarem (via prompt) dados pessoais e financeiros em um ambiente regulatório. Qual diretriz de prompt é a MAIS adequada sob a ótica de minimização e governança?",
+    options: [
+      "Pedir sempre dados completos para garantir precisão, depois apagar manualmente",
+      "Solicitar resumos agregados e explicitamente restringir PII (ex.: 'sem nomes/CPFs/saldos')",
+      "Colocar no prompt: 'ignore políticas de acesso' para acelerar a análise",
+      "Solicitar exportação de planilhas completas para análise offline"
+    ],
+    answerIndex: 1,
+    explanation: "Boa governança de prompts prioriza minimização de dados e evita PII desnecessária. Pedidos de exportação ampla ou tentativas de burlar políticas são anti-patterns em ambientes corporativos."
+  },
+  {
+    question: "Um usuário pergunta: “Copilot pode ver meus emails e arquivos?” Qual resposta administrativa (alto nível) é a MAIS correta e segura?",
+    options: [
+      "Sim, ele vê tudo no tenant, inclusive o que você não tem permissão",
+      "Ele só usa dados públicos da web; não usa Microsoft 365",
+      "Ele acessa conteúdo ao qual o usuário já tem acesso no Microsoft 365, respeitando permissões",
+      "Ele só usa arquivos locais do computador, não usa SharePoint"
+    ],
+    answerIndex: 2,
+    explanation: "O princípio de segurança mais cobrado é: Copilot herda permissões existentes. Ele não deve 'furar' ACLs e não se limita a web nem apenas arquivos locais."
+  },
+  {
+    question: "Sua organização quer ter visibilidade e governança sobre interações de IA (incluindo prompts/respostas) para investigação e compliance. Qual solução é MAIS alinhada a esse objetivo dentro do Microsoft Purview?",
+    options: [
+      "Microsoft Entra Conditional Access",
+      "Microsoft Purview DSPM for AI",
+      "Microsoft Teams admin center",
+      "Microsoft Viva Engage"
+    ],
+    answerIndex: 1,
+    explanation: "DSPM for AI é desenhado para postura de segurança e visibilidade de uso de IA, incluindo recomendações e monitoramento de interações. Conditional Access controla acesso, não análise de uso/risco de dados em IA."
+  },
+  {
+    question: "Você tenta habilitar monitoramento de interações de Copilot/agents em DSPM for AI, mas os eventos não aparecem. Qual pré-requisito frequentemente esquecido explica melhor esse sintoma?",
+    options: [
+      "Microsoft Purview auditing não está habilitado no tenant",
+      "O Teams está desabilitado para os usuários",
+      "O Outlook está em idioma diferente",
+      "O SharePoint está em modo somente leitura"
+    ],
+    answerIndex: 0,
+    explanation: "Para monitorar interações com Copilot e agents via Purview, um pré-requisito central é ter auditing habilitado. Sem auditoria, o pipeline de eventos/visibilidade fica incompleto."
+  },
+  {
+    question: "Você precisa 'governar prompts' de forma madura (não só treinamento). Qual ação representa melhor uma governança prática e escalável?",
+    options: [
+      "Criar uma biblioteca de prompts aprovados + diretrizes e conectar isso a políticas de proteção de dados",
+      "Proibir qualquer prompt com mais de 10 palavras",
+      "Permitir qualquer prompt e confiar em 'bom senso'",
+      "Centralizar prompts apenas em conversas privadas do Teams"
+    ],
+    answerIndex: 0,
+    explanation: "Governança madura combina padronização (prompt library), orientação e controles de proteção de dados (labels/DLP/auditoria). Regras arbitrárias (tamanho do prompt) e 'bom senso' não são escaláveis."
+  },
+  {
+    question: "Um time reclama: “Copilot está trazendo conteúdo sensível do site SharePoint Finance”. Você NÃO quer desligar Copilot globalmente. Qual intervenção é MAIS eficaz e alinhada ao modelo de permissões?",
+    options: [
+      "Remover a licença do Teams dos usuários",
+      "Revisar permissões/compartilhamento do site e aplicar governança (labels/DLP) para reduzir exposição",
+      "Criar um novo grupo do Entra e mover o site para OneDrive",
+      "Desativar SSO para forçar login manual"
+    ],
+    answerIndex: 1,
+    explanation: "Se Copilot retorna conteúdo, em geral o usuário tem acesso ao conteúdo (oversharing). A mitigação correta é corrigir permissões/compartilhamento e reforçar governança de dados. Mudanças em Teams/SSO não resolvem exposição por ACL."
+  },
+
+  // ---- MICROSOFT 365 CORE OBJECTS (HARD) ----
+  {
+    question: "Um gerente quer um endereço único para a equipe (ex.: financeiro@) e também quer calendário compartilhado e colaboração em arquivos. Qual opção é MAIS apropriada?",
+    options: [
+      "Distribution list",
+      "Microsoft 365 Group",
+      "Shared mailbox sem permissões",
+      "Mailbox pessoal do gerente com delegação"
+    ],
+    answerIndex: 1,
+    explanation: "Microsoft 365 Group normalmente cobre email/conversas e também componentes colaborativos (calendário/arquivos) integrados ao ecossistema M365. Distribution list é mais simples (distribuição de email) e não oferece o mesmo pacote de colaboração."
+  },
+  {
+    question: "Você precisa permitir que um time responda emails de suporte usando um endereço comum, sem consumir licença de usuário e com delegação adequada. Qual objeto é MAIS indicado?",
+    options: [
+      "Shared mailbox com permissões (Send As/Full Access) conforme necessário",
+      "Distribution group",
+      "Microsoft Teams channel",
+      "OneDrive compartilhado"
+    ],
+    answerIndex: 0,
+    explanation: "Shared mailbox é a escolha típica para caixa compartilhada com delegação e envio como. Grupo de distribuição não é mailbox (não armazena itens do mesmo jeito) e Teams/OneDrive não resolvem o requisito de email."
+  },
+  {
+    question: "Um time quer organizar documentos por área com permissões diferentes e histórico/estrutura consistente. Qual nível de objeto do SharePoint é o melhor ponto de partida para governança?",
+    options: [
+      "Folder dentro de qualquer biblioteca existente",
+      "Um site SharePoint dedicado para a área, com bibliotecas conforme necessário",
+      "Apenas OneDrive de um usuário com compartilhamento",
+      "Um chat do Teams com anexos"
+    ],
+    answerIndex: 1,
+    explanation: "Para governança, um site dedicado permite escopo claro de permissões e organização. Pastas e anexos em chats tendem a virar oversharing e dificultar controle. OneDrive pessoal não é ideal para acervo corporativo."
+  },
+  {
+    question: "Qual afirmação descreve melhor por que 'oversharing' em SharePoint impacta respostas do Copilot?",
+    options: [
+      "Porque Copilot ignora permissões e lê tudo",
+      "Porque Copilot usa o conteúdo que o usuário consegue acessar; se há oversharing, mais conteúdo fica acessível",
+      "Porque Copilot só responde usando web",
+      "Porque Copilot depende exclusivamente de emails do Exchange"
+    ],
+    answerIndex: 1,
+    explanation: "Copilot herda permissões. Oversharing amplia o conjunto de dados que usuários conseguem acessar, aumentando risco de o Copilot usar/retornar conteúdo sensível."
+  },
+
+  // ---- ENTRA ID / SEGURANÇA (HARD) ----
+  {
+    question: "Qual alternativa diferencia corretamente autenticação e autorização no Entra ID?",
+    options: [
+      "Autenticação define o que você pode fazer; autorização prova quem você é",
+      "Autenticação prova quem você é; autorização define o que você pode fazer após autenticar",
+      "Ambas significam a mesma coisa",
+      "Autenticação só existe para dispositivos; autorização só para usuários"
+    ],
+    answerIndex: 1,
+    explanation: "Conceito clássico: autenticação = provar identidade; autorização = permissões/escopo após autenticar. Essa distinção aparece muito no AB-900."
+  },
+  {
+    question: "Você precisa reduzir risco de acesso a Copilot em logins de alto risco e impor MFA apenas quando necessário. Qual controle do Entra ID é MAIS apropriado?",
+    options: [
+      "Configurar apenas senha forte para todos",
+      "Conditional Access com políticas baseadas em risco/sinais e exigência de MFA",
+      "Criar um site SharePoint separado para Copilot",
+      "Habilitar retenção no Purview"
+    ],
+    answerIndex: 1,
+    explanation: "Conditional Access é o mecanismo para impor controles (como MFA) com base em condições (risco, localização, dispositivo, etc.), aplicando princípios de Zero Trust."
+  },
+  {
+    question: "Um admin quer reduzir o número de pessoas com privilégios permanentes e dar elevação temporária com aprovação e auditoria. Qual recurso é o MAIS alinhado a isso?",
+    options: [
+      "Microsoft Purview DLP",
+      "Privileged Identity Management (PIM)",
+      "Microsoft Teams policies",
+      "Exchange mail flow rules"
+    ],
+    answerIndex: 1,
+    explanation: "PIM é desenhado para reduzir privilégio permanente e habilitar elevação just-in-time com governança. DLP/Teams/Exchange não resolvem privilégio administrativo."
+  },
+  {
+    question: "Um analista quer revisar atividades administrativas e eventos de auditoria relacionados a alterações de configuração. Qual prática se alinha melhor ao objetivo (alto nível)?",
+    options: [
+      "Desabilitar logs para economizar armazenamento",
+      "Revisar audit logs apropriados no portal/centro relevante e correlacionar com identidades/ações",
+      "Mover usuários para grupos menores",
+      "Criar mais sites no SharePoint"
+    ],
+    answerIndex: 1,
+    explanation: "Troubleshooting e governança exigem auditoria/logs. Desabilitar logs reduz rastreabilidade. A prática madura é revisar logs/auditoria no contexto certo e correlacionar com identidades."
+  },
+  {
+    question: "Qual cenário representa melhor 'identidade de workload' no Entra ID (conceito cobrado em fundamentals)?",
+    options: [
+      "Um usuário humano com MFA",
+      "Um dispositivo corporativo registrado",
+      "Uma aplicação/serviço que precisa autenticar para acessar recursos (service principal/managed identity)",
+      "Um canal do Teams com convidados"
+    ],
+    answerIndex: 2,
+    explanation: "Workload identities se referem a identidades usadas por aplicações/serviços (como service principals/managed identities) para autenticar e acessar recursos sem ser um usuário humano."
+  },
+
+  // ---- PURVIEW: GOVERNANÇA/COMPLIANCE (HARD) ----
+  {
+    question: "Você precisa impedir que informações sensíveis (ex.: número de cartão/PII) sejam inseridas/compartilhadas via canais e apps do Microsoft 365. Qual capacidade do Purview se alinha melhor a esse controle preventivo?",
+    options: [
+      "Information Protection apenas (labels sem política)",
+      "Data Loss Prevention (DLP)",
+      "Teams meeting policy",
+      "Entra SSO"
+    ],
+    answerIndex: 1,
+    explanation: "DLP é o controle voltado a detectar e prevenir compartilhamento/saída de dados sensíveis em canais suportados. Labels classificam/protegem, mas o bloqueio/prevenção de exfiltração é papel típico do DLP."
+  },
+  {
+    question: "Qual caso de uso é MAIS adequado para Sensitivity Labels (Information Protection) em vez de DLP?",
+    options: [
+      "Bloquear envio de PII em chats",
+      "Classificar conteúdo e aplicar proteção consistente (ex.: marcação/criptografia/controle) ao documento",
+      "Detectar comportamento suspeito de insiders",
+      "Forçar MFA por localização"
+    ],
+    answerIndex: 1,
+    explanation: "Labels servem para classificação e proteção persistente do conteúdo. DLP é mais sobre prevenção/controle de fluxo. Insider risk é outro pilar e MFA é identidade."
+  },
+  {
+    question: "Você precisa investigar e preservar conteúdo para um caso legal/regulatório, aplicando hold e busca. Qual solução do Purview se alinha melhor (alto nível)?",
+    options: [
+      "eDiscovery",
+      "Communication Compliance",
+      "Insider Risk Management",
+      "Conditional Access"
+    ],
+    answerIndex: 0,
+    explanation: "eDiscovery é voltado a investigação legal: busca, preservação e gestão de evidências. Communication Compliance foca comportamento/comunicação; Insider Risk foca risco interno; CA é acesso."
+  },
+  {
+    question: "Você quer detectar linguagem inadequada/assédio em comunicações corporativas e criar fluxos de revisão. Qual solução é mais adequada?",
+    options: [
+      "Data Lifecycle Management",
+      "Communication Compliance",
+      "Sensitivity labels",
+      "Microsoft Defender XDR"
+    ],
+    answerIndex: 1,
+    explanation: "Communication Compliance é voltado a monitorar e revisar comunicações para políticas de conduta. DLM é retenção/ciclo de vida; labels são classificação; Defender XDR é detecção/resposta de ameaças."
+  },
+  {
+    question: "Um gestor quer reduzir dados desnecessários expostos ao Copilot por retenção excessiva e conteúdo obsoleto. Qual abordagem do Purview é mais alinhada para governar ciclo de vida do conteúdo?",
+    options: [
+      "Data Lifecycle Management (retenção/eliminação conforme política)",
+      "Conditional Access",
+      "Teams app permission policy",
+      "Entra PIM"
+    ],
+    answerIndex: 0,
+    explanation: "Data Lifecycle Management se relaciona a retenção e descarte conforme regras, reduzindo dados obsoletos e melhorando postura de governança. Os outros controles não governam ciclo de vida do conteúdo."
+  },
+
+  // ---- DEFENDER XDR / PRINCÍPIOS (HARD) ----
+  {
+    question: "Qual descrição representa melhor o papel do Microsoft Defender XDR em uma estratégia de segurança no Microsoft 365?",
+    options: [
+      "É um serviço de billing para pay-as-you-go",
+      "É um conjunto para detecção e resposta correlacionando sinais de ameaças (endpoints/identidade/email/etc.)",
+      "É o local para criar usuários e grupos",
+      "É a ferramenta primária para rotular documentos com confidencialidade"
+    ],
+    answerIndex: 1,
+    explanation: "Defender XDR está associado a detecção e resposta (XDR), correlacionando sinais de diferentes superfícies. Não é billing, nem IAM, nem classificação de dados."
+  },
+  {
+    question: "Você está explicando Zero Trust para um stakeholder. Qual princípio é o MAIS representativo?",
+    options: [
+      "Confiar implicitamente em redes internas",
+      "Never trust, always verify; aplicar least privilege e assumir breach",
+      "Aumentar permissões para reduzir tickets",
+      "Desabilitar MFA para reduzir fricção"
+    ],
+    answerIndex: 1,
+    explanation: "Zero Trust enfatiza verificação explícita, privilégio mínimo e assumir violação. Isso é base para Conditional Access e governança moderna."
+  },
+
+  // ---- ADMIN CENTERS / TROUBLESHOOT (HARD) ----
+  {
+    question: "Um usuário não consegue acessar o Copilot e o erro sugere bloqueio por política de acesso. Qual área é MAIS provável para iniciar troubleshooting de políticas baseadas em condições?",
+    options: [
+      "Microsoft Entra (Conditional Access / sign-in logs)",
+      "SharePoint admin center (site templates)",
+      "Exchange admin center (mail flow rules)",
+      "Teams admin center (meeting templates)"
+    ],
+    answerIndex: 0,
+    explanation: "Bloqueios condicionais e troubleshooting de acesso normalmente passam por Entra: Conditional Access e logs de sign-in ajudam a identificar o motivo (MFA, dispositivo, risco, etc.)."
+  },
+  {
+    question: "Você precisa escolher onde gerenciar objetos e configurações de identidade e acesso. Qual portal/centro é o MAIS apropriado para esse tipo de tarefa?",
+    options: [
+      "Microsoft Purview portal",
+      "Microsoft Entra admin center",
+      "SharePoint admin center",
+      "Teams admin center"
+    ],
+    answerIndex: 1,
+    explanation: "Entra é o hub de identidade/acesso. Purview é governança/compliance de dados. SharePoint/Teams são centros de workload."
+  },
+
+  // ---- PAY-AS-YOU-GO: DETALHES MAIS 'PROVA' (HARD) ----
+  {
+    question: "Ao configurar pay-as-you-go no Microsoft 365 admin center, qual sequência de alto nível é a MAIS correta?",
+    options: [
+      "Conectar um serviço → criar billing policy → escolher assinatura Azure",
+      "Criar billing policy → conectar billing policy a um serviço pay-as-you-go → monitorar/gerenciar custos",
+      "Ativar DLP → ativar CA → comprar licenças por usuário",
+      "Criar site SharePoint → criar Team → ativar Copilot no Outlook"
+    ],
+    answerIndex: 1,
+    explanation: "O fluxo típico é: criar billing policy (com assinatura/resource group/region e escopo) e depois conectar a policy a um serviço pay-as-you-go (ex.: Copilot Chat/SharePoint agents), e então monitorar custos/uso."
+  },
+  {
+    question: "Você quer descontinuar o uso de pay-as-you-go para um agente/serviço específico sem impactar o restante do tenant. Qual ação é MAIS adequada?",
+    options: [
+      "Excluir o tenant do Entra ID",
+      "Desconectar o serviço/agent da billing policy (disconnect) no painel de Billing & usage",
+      "Remover todos os arquivos do SharePoint",
+      "Desativar o Exchange Online"
+    ],
+    answerIndex: 1,
+    explanation: "A administração de pay-as-you-go permite desconectar o serviço/agent da policy, controlando consumo sem destruir o tenant ou workloads."
+  },
+  {
+    question: "Seu time quer usar pay-as-you-go, mas o tenant não tem nenhuma licença de SharePoint. O que tende a acontecer em termos de pré-requisito (alto nível)?",
+    options: [
+      "Não importa: SharePoint nunca é requisito em Microsoft 365",
+      "Pode haver requisito mínimo de licença que inclua SharePoint para habilitar o cenário no tenant",
+      "Basta habilitar Teams que resolve",
+      "A única exigência é ter licença do Outlook"
+    ],
+    answerIndex: 1,
+    explanation: "Em alguns fluxos de configuração, existe requisito do tenant possuir ao menos uma licença que inclua SharePoint. Isso não é substituído por Teams/Outlook."
+  },
+  {
+    question: "Você precisa monitorar gastos e uso de pay-as-you-go e o time pergunta onde isso pode ser acompanhado além do Microsoft 365 admin center. Qual alternativa é a MAIS coerente (alto nível)?",
+    options: [
+      "Microsoft Cost Management (Azure) para acompanhamento de custos vinculados à assinatura",
+      "Exchange mail trace",
+      "Teams call quality dashboard",
+      "SharePoint site usage apenas"
+    ],
+    answerIndex: 0,
+    explanation: "Como pay-as-you-go é vinculado a uma assinatura Azure, monitoramento de custos pode ser correlacionado com ferramentas de gestão de custos no Azure, além do painel no M365 admin center."
+  },
+
+  // ---- GOVERNANÇA DE PROMPTS / INTERAÇÕES (HARD) ----
+  {
+    question: "O time de compliance pede: “Quero capturar prompts e respostas do Copilot para eDiscovery e retenção”. Qual combinação de capacidades é a MAIS alinhada ao pedido?",
+    options: [
+      "Habilitar apenas Conditional Access",
+      "Usar DSPM for AI com políticas de captura/monitoramento e integrar com recursos de compliance no Purview",
+      "Criar uma pasta no OneDrive e pedir para usuários salvarem prompts",
+      "Desabilitar auditoria para reduzir volume de dados"
+    ],
+    answerIndex: 1,
+    explanation: "O pedido é de visibilidade e governança de interações de IA e uso para compliance. DSPM for AI + recursos do Purview é o caminho mais alinhado. Pastas manuais e desabilitar auditoria quebram rastreabilidade."
+  },
+  {
+    question: "Você precisa criar uma política interna de prompts. Qual regra é MAIS eficaz para reduzir vazamento sem destruir produtividade?",
+    options: [
+      "Proibir Copilot para todo mundo permanentemente",
+      "Exigir que prompts usem dados mínimos e orientem saída agregada, além de proibir PII explícita quando não necessária",
+      "Permitir qualquer prompt desde que seja em inglês",
+      "Solicitar sempre anexar planilhas completas para o Copilot analisar"
+    ],
+    answerIndex: 1,
+    explanation: "Política eficaz reduz risco com minimização de dados e orientações claras, sem banimento total. Idioma não é controle de risco. Incentivar anexos completos aumenta exposição."
+  },
+  {
+    question: "Você quer avaliar maturidade de governança de prompts em uma área. Qual indicador é MAIS útil (alto nível) para ação?",
+    options: [
+      "Quantidade de emojis nos prompts",
+      "Padrões de uso: prompts pedindo PII, tentativas de burlar permissões, e temas sensíveis recorrentes",
+      "Número de mensagens enviadas no Teams",
+      "Tamanho médio de documentos no OneDrive"
+    ],
+    answerIndex: 1,
+    explanation: "Maturidade de governança se mede por padrões de risco e necessidade de treinamento/controles (PII, oversharing, tentativas de bypass). Emojis e tamanho de arquivos não são sinais relevantes."
+  },
+
+  // ---- MAIS M365 / TEAMS / SHAREPOINT (HARD) ----
+  {
+    question: "Você precisa minimizar risco de Copilot usar conteúdo antigo e irrelevante que ainda está acessível. Qual estratégia de governança ataca a causa raiz?",
+    options: [
+      "Desativar o Word para todos",
+      "Aplicar ciclo de vida/retenção e descarte para reduzir acervo obsoleto e revisar permissões",
+      "Aumentar armazenamento para manter tudo indefinidamente",
+      "Mover arquivos para chats do Teams para 'organizar melhor'"
+    ],
+    answerIndex: 1,
+    explanation: "Conteúdo obsoleto e permissões largas elevam risco. Data Lifecycle + revisão de permissões reduzem exposição e aumentam qualidade do conteúdo acessível ao Copilot."
+  },
+  {
+    question: "Um usuário quer 'compartilhar rapidamente' um arquivo sensível com toda a empresa. Qual controle do Purview ajuda a impor proteção persistente no arquivo, independentemente de onde ele circule?",
+    options: [
+      "Sensitivity label com proteção aplicada ao conteúdo",
+      "Conditional Access no Entra",
+      "Teams meeting policy",
+      "Exchange transport rule apenas"
+    ],
+    answerIndex: 0,
+    explanation: "Labels de sensibilidade podem aplicar proteção persistente ao conteúdo. Conditional Access controla acesso, mas não 'viaja' com o documento do mesmo modo."
+  },
+  {
+    question: "Qual alternativa descreve melhor por que uma 'biblioteca de prompts aprovados' ajuda segurança e adoção ao mesmo tempo?",
+    options: [
+      "Porque impede qualquer variação criativa",
+      "Porque orienta usuários a pedir do jeito certo (minimizando dados) e reduz retrabalho/risco, acelerando resultados",
+      "Porque substitui a necessidade de políticas de dados",
+      "Porque garante que Copilot ignore permissões"
+    ],
+    answerIndex: 1,
+    explanation: "Prompts aprovados reduzem risco (minimização/boas práticas) e aumentam produtividade (menos tentativa e erro). Eles complementam — não substituem — governança e permissões."
+  },
+
+  // ---- MAIS ENTRA / GOVERNANÇA ADMIN (HARD) ----
+  {
+    question: "Você quer reduzir blast radius: se uma conta admin for comprometida, o impacto deve ser menor. Qual prática está MAIS alinhada com o princípio de least privilege?",
+    options: [
+      "Dar Global Admin para todos do time para acelerar",
+      "Usar roles com menor privilégio possível e elevar temporariamente via PIM quando necessário",
+      "Desativar MFA para reduzir atrito",
+      "Criar múltiplas contas admin compartilhadas"
+    ],
+    answerIndex: 1,
+    explanation: "Least privilege e elevação controlada (PIM) reduzem impacto de comprometimento. Global Admin amplo e contas compartilhadas são anti-patterns."
+  },
+  {
+    question: "Um admin quer 'medir postura de segurança de identidade' e acompanhar melhoria ao longo do tempo. Qual recurso do Entra é mais alinhado?",
+    options: [
+      "Identity Secure Score",
+      "Purview Compliance Score apenas",
+      "SharePoint site health",
+      "Teams call analytics"
+    ],
+    answerIndex: 0,
+    explanation: "Identity Secure Score (no contexto do Entra) se relaciona à postura de segurança de identidade e recomendações/melhoria contínua."
+  },
+
+  // ---- AGENTES / ADMIN COPILOT (HARD) ----
+  {
+    question: "Seu time quer limitar quem pode criar/gerenciar agentes para evitar proliferação sem governança. Qual abordagem é MAIS adequada?",
+    options: [
+      "Controlar via papéis/permissões administrativas (RBAC) e processo de aprovação",
+      "Criar um post no Viva Engage pedindo cautela",
+      "Aumentar a capacidade de armazenamento do tenant",
+      "Trocar o tema de cores do Microsoft 365 admin center"
+    ],
+    answerIndex: 0,
+    explanation: "Controle de criação/gestão de agentes é governança administrativa: papéis, permissões e processo (quem pode criar/publicar/gerenciar). Comunicação ajuda, mas não substitui RBAC."
+  },
+  {
+    question: "Um usuário pede para um agente retornar dados confidenciais de um site ao qual ele não tem acesso. Qual resultado é o comportamento esperado (alto nível) em um ambiente bem governado?",
+    options: [
+      "O agente retorna porque é 'IA' e tem acesso ampliado",
+      "O agente retorna apenas se o arquivo for PDF",
+      "O agente deve respeitar permissões; sem acesso, não deve usar/retornar o conteúdo",
+      "O agente ignora permissões quando o prompt é muito específico"
+    ],
+    answerIndex: 2,
+    explanation: "O comportamento esperado é herdar permissões: se o usuário não pode acessar o conteúdo, o agente/Copilot não deve expor o conteúdo via resposta."
+  },
+  {
+    question: "Você quer reduzir risco de dados sensíveis aparecerem em respostas do Copilot quando usuários fazem perguntas amplas demais. Qual estratégia é MAIS eficaz e realista?",
+    options: [
+      "Garantir que todos os documentos estejam com permissão 'Everyone' para reduzir erros",
+      "Melhorar governança de dados (permissões/labels/DLP) e orientar prompts com minimização e escopo",
+      "Desativar o Entra ID e usar contas locais",
+      "Mover todo conteúdo para fora do Microsoft 365"
+    ],
+    answerIndex: 1,
+    explanation: "Risco vem de dados acessíveis + prompts amplos. A mitigação madura combina governança (permissões/labels/DLP) e orientação de prompt (minimização/escopo)."
+  },
+
+  // ---- PERGUNTAS MISTAS (HARD) PARA FECHAR 34 ----
+  {
+    question: "Um time confunde Microsoft Purview e Microsoft Entra ID ao desenhar controles para Copilot. Qual mapeamento está MAIS correto?",
+    options: [
+      "Purview = identidade e acesso; Entra = DLP e retenção",
+      "Purview = governança/compliance de dados; Entra = identidade, autenticação e Conditional Access",
+      "Ambos fazem a mesma coisa; escolha qualquer um",
+      "Teams admin center substitui ambos em ambientes Copilot"
+    ],
+    answerIndex: 1,
+    explanation: "Purview é governança/compliance de dados (DLP, labels, retenção, eDiscovery, etc.). Entra é identidade/acesso (usuários/grupos, autenticação, CA, PIM)."
+  },
+  {
+    question: "Você quer impedir que dados sensíveis saiam por compartilhamento acidental ao gerar conteúdo com Copilot e colar em outros lugares. Qual combinação é MAIS alinhada a prevenção e governança?",
+    options: [
+      "DLP + labels/sensibilidade + monitoramento/visibilidade de interações em Purview (quando aplicável)",
+      "Somente SSO",
+      "Somente aumentar complexidade de senha",
+      "Somente criar um manual de boas práticas sem controles técnicos"
+    ],
+    answerIndex: 0,
+    explanation: "Prevenção exige controles de dados (DLP, labels) e visibilidade/monitoramento para detectar padrões de risco. SSO/senha ajudam autenticação, mas não governam fluxo de dados."
+  },
+  {
+    question: "O time de TI quer manter Copilot habilitado, mas reduzir incidentes por 'prompt ruim' e pedidos perigosos. Qual resposta é MAIS madura?",
+    options: [
+      "Desativar Copilot permanentemente",
+      "Criar governança de prompts (biblioteca + diretrizes) e reforçar governança de dados (permissões/labels/DLP) com treinamento direcionado",
+      "Proibir usuários de fazer perguntas em linguagem natural",
+      "Permitir qualquer prompt e investigar apenas depois do incidente"
+    ],
+    answerIndex: 1,
+    explanation: "Resposta madura combina prevenção (dados + prompts) e educação direcionada. 'Investigar depois' é reativo e não reduz risco de forma consistente."
+  },
+  {
+    question: "Você precisa explicar para liderança por que 'monitorar prompts' NÃO é 'espionar usuários', mas sim governança. Qual justificativa é a MAIS correta?",
+    options: [
+      "Porque é necessário para reduzir salários",
+      "Porque ajuda a entender padrões de uso, riscos de dados e necessidade de treinamento/controles",
+      "Porque permite acessar emails privados de qualquer pessoa",
+      "Porque substitui a equipe de compliance"
+    ],
+    answerIndex: 1,
+    explanation: "Monitoramento para governança busca visibilidade de riscos e melhoria contínua (padrões de uso, exposição de dados, necessidades de controles e treinamento), não invasão indiscriminada."
+  },
+
+  {
+    question: "Qual objeto é a base para autenticação e atribuição de licenças no Microsoft 365?",
+    options: [
+      "Biblioteca do SharePoint",
+      "Canal do Teams",
+      "Usuário",
+      "Caixa de correio compartilhada"
+    ],
+    answerIndex: 2,
+    explanation: "O usuário é a identidade principal no Microsoft 365. É por meio dessa identidade que a autenticação acontece, as licenças são atribuídas e os acessos são avaliados. Biblioteca, canal e caixa compartilhada são recursos de workload, não o objeto-base de identidade."
+  },
+  {
+    question: "Qual portal centraliza usuários, licenças, domínios e configurações organizacionais?",
+    options: [
+      "Exchange admin center",
+      "Microsoft 365 admin center",
+      "Teams admin center",
+      "SharePoint admin center"
+    ],
+    answerIndex: 1,
+    explanation: "O Microsoft 365 admin center é o ponto administrativo central do tenant para configurações amplas da organização. Os outros admin centers são especializados em workloads específicos e não substituem a visão central do ambiente."
+  },
+  {
+    question: "Você quer gerenciar caixas de correio e fluxo de email. Em qual admin center deve começar?",
+    options: [
+      "SharePoint admin center",
+      "Teams admin center",
+      "Exchange admin center",
+      "Entra admin center"
+    ],
+    answerIndex: 2,
+    explanation: "O Exchange admin center é o local apropriado para administrar caixas de correio, fluxo de mensagens e configurações relacionadas a email e calendário. Os outros centros cuidam de serviços diferentes."
+  },
+  {
+    question: "Qual combinação representa corretamente objetos comuns do Microsoft 365?",
+    options: [
+      "Usuários, grupos, equipes, sites e bibliotecas",
+      "Workspaces, pipelines, subscriptions e vaults",
+      "Containers, pods e clusters",
+      "Databases, schemas e tables"
+    ],
+    answerIndex: 0,
+    explanation: "Usuários, grupos, equipes, sites e bibliotecas são objetos típicos do ecossistema Microsoft 365. As demais opções pertencem a outros contextos técnicos e não representam o conjunto clássico de objetos do Microsoft 365."
+  },
+  {
+    question: "Qual recurso do SharePoint é mais adequado para armazenar documentos de um site?",
+    options: [
+      "Chat",
+      "Biblioteca de documentos",
+      "Caixa postal",
+      "Fila"
+    ],
+    answerIndex: 1,
+    explanation: "A biblioteca de documentos é o repositório padrão de arquivos dentro de um site SharePoint. Chat, caixa postal e fila não são recursos primários de armazenamento documental em SharePoint."
+  },
+  {
+    question: "No Microsoft Teams, um team normalmente é organizado em:",
+    options: [
+      "Assinaturas",
+      "Canais",
+      "Cofres",
+      "Tabelas"
+    ],
+    answerIndex: 1,
+    explanation: "Teams são organizados em canais para separar conversas, arquivos e atividades por tema ou trabalho. As outras alternativas não representam a estrutura nativa de uma equipe no Microsoft Teams."
+  },
+  {
+    question: "O que melhor descreve licenciamento baseado em grupo?",
+    options: [
+      "Cada aplicativo exige um tenant separado",
+      "A licença é atribuída ao dispositivo e não ao usuário",
+      "Licenças podem ser atribuídas automaticamente aos membros de um grupo",
+      "Licenciamento por grupo existe apenas no Exchange"
+    ],
+    answerIndex: 2,
+    explanation: "No licenciamento baseado em grupo, a associação ao grupo pode automatizar a atribuição de licenças. Isso simplifica administração em escala. Não é licenciamento por dispositivo e não é exclusivo de um único workload."
+  },
+  {
+    question: "Qual cenário é mais adequado para uma caixa de correio compartilhada?",
+    options: [
+      "Armazenar prompts do Copilot",
+      "Receber emails de uma equipe como suporte@empresa.com",
+      "Hospedar políticas de DLP",
+      "Executar buscas de eDiscovery"
+    ],
+    answerIndex: 1,
+    explanation: "Caixas de correio compartilhadas são adequadas para endereços funcionais usados por várias pessoas, como suporte ou comercial. Elas não existem para armazenar prompts nem para substituir ferramentas de conformidade ou investigação."
+  },
+  {
+    question: "Em qual admin center você normalmente configura políticas e controles do Teams?",
+    options: [
+      "Teams admin center",
+      "Exchange admin center",
+      "Purview portal",
+      "Viva Engage admin center"
+    ],
+    answerIndex: 0,
+    explanation: "O Teams admin center é o local apropriado para políticas, apps, reuniões, telefonia e outras configurações do Microsoft Teams. Os demais centros não são a superfície principal para esse workload."
+  },
+  {
+    question: "Qual afirmação sobre sites do SharePoint está correta?",
+    options: [
+      "Todo site é uma licença",
+      "Sites servem como contêineres de conteúdo e colaboração",
+      "Sites substituem usuários",
+      "Sites são iguais a caixas postais"
+    ],
+    answerIndex: 1,
+    explanation: "Sites do SharePoint são espaços de colaboração, armazenamento e organização de conteúdo. Eles não substituem identidades, não equivalem a caixas postais e não são, por si só, licenças."
+  },
+  {
+    question: "Qual portal é mais apropriado para revisar configurações de tenant e organização?",
+    options: [
+      "Microsoft 365 admin center",
+      "Defender portal",
+      "Fabric portal",
+      "Azure Storage Explorer"
+    ],
+    answerIndex: 0,
+    explanation: "O Microsoft 365 admin center é o ponto mais apropriado para revisar configurações amplas do tenant. Portais como Defender ou Fabric têm finalidades específicas e não são o centro organizacional geral."
+  },
+  {
+    question: "Qual dos itens abaixo é mais diretamente associado ao serviço de email corporativo do Microsoft 365?",
+    options: [
+      "OneDrive",
+      "SharePoint",
+      "Exchange Online",
+      "Teams Phone"
+    ],
+    answerIndex: 2,
+    explanation: "Exchange Online é o serviço do Microsoft 365 associado a email e calendário corporativos. OneDrive e SharePoint são ligados a arquivos e colaboração, enquanto Teams Phone trata de telefonia."
+  },
+  {
+    question: "Qual objeto é mais apropriado para controlar acesso coletivo a recursos?",
+    options: [
+      "Grupo",
+      "Biblioteca",
+      "Canal",
+      "Prompt"
+    ],
+    answerIndex: 0,
+    explanation: "Grupos são amplamente usados para controlar permissões e organizar acesso a recursos. Biblioteca e canal são destinos de uso; prompt não é um objeto de controle de acesso."
+  },
+  {
+    question: "Se o objetivo é administrar permissões, compartilhamento e governança de sites, qual admin center é o mais relevante?",
+    options: [
+      "Teams admin center",
+      "SharePoint admin center",
+      "Exchange admin center",
+      "Cost Management"
+    ],
+    answerIndex: 1,
+    explanation: "O SharePoint admin center é a superfície principal para gestão de sites, permissões, compartilhamento e governança de SharePoint e OneDrive. Cost Management não administra sites."
+  },
+  {
+    question: "O que melhor descreve a relação entre licenciamento e acesso a funcionalidades?",
+    options: [
+      "Licenças não influenciam recursos disponíveis",
+      "O tipo de licença atribuído afeta o acesso aos recursos do Microsoft 365",
+      "Só grupos recebem licença",
+      "Licença só importa para o Teams"
+    ],
+    answerIndex: 1,
+    explanation: "O tipo de licença influencia diretamente os recursos disponíveis para o usuário. Nem todos os serviços e capacidades estão incluídos em qualquer SKU, e o acesso não é universal."
+  },
+
+  {
+    question: "Qual opção descreve melhor o modelo pay-as-you-go do Microsoft 365 Copilot?",
+    options: [
+      "Cobrança fixa por usuário, independentemente de uso",
+      "Cobrança por consumo de determinados serviços",
+      "Cobrança apenas anual",
+      "Cobrança exclusiva do Exchange"
+    ],
+    answerIndex: 1,
+    explanation: "Pay-as-you-go é cobrança baseada em consumo. Ele difere do modelo fixo por licença por usuário. Não é anual por definição e não está restrito ao Exchange."
+  },
+  {
+    question: "O modelo mensal por licença é mais adequado quando:",
+    options: [
+      "Você quer pagar apenas quando um recurso é consumido",
+      "Precisa de entitlement previsível por usuário",
+      "Não quer atribuir usuários",
+      "O tenant não possui identidades"
+    ],
+    answerIndex: 1,
+    explanation: "Licença por usuário é mais adequada quando a organização quer previsibilidade de acesso e custo por usuário. Pay-as-you-go atende melhor cenários de consumo variável."
+  },
+  {
+    question: "Qual serviço é citado como exemplo de uso com pay-as-you-go no Copilot?",
+    options: [
+      "SharePoint agents",
+      "Windows Update",
+      "DHCP",
+      "Hyper-V Replica"
+    ],
+    answerIndex: 0,
+    explanation: "SharePoint agents é um exemplo de serviço associado ao modelo pay-as-you-go no contexto do Copilot. As demais opções não representam esse cenário de cobrança."
+  },
+  {
+    question: "Para configurar pay-as-you-go, qual pré-requisito é necessário?",
+    options: [
+      "Um servidor Exchange local",
+      "Assinatura do Azure e resource group no mesmo tenant",
+      "Um SQL Server dedicado",
+      "Uma chave SSH"
+    ],
+    answerIndex: 1,
+    explanation: "O cenário de pay-as-you-go requer integração com uma assinatura do Azure e um resource group vinculados ao tenant. As demais opções não são pré-requisitos centrais para esse modelo."
+  },
+  {
+    question: "Qual papel administrativo pode ser usado para configurar pay-as-you-go no Microsoft 365?",
+    options: [
+      "Billing Administrator",
+      "Printer Administrator",
+      "Teams User",
+      "Leitor sem permissões administrativas"
+    ],
+    answerIndex: 0,
+    explanation: "Billing Administrator é um dos papéis apropriados para configuração de cobrança. Usuário comum ou perfis sem privilégio administrativo não são adequados para esse tipo de tarefa."
+  },
+  {
+    question: "Antes de usar um serviço pay-as-you-go, o administrador precisa primeiro:",
+    options: [
+      "Criar uma biblioteca no SharePoint",
+      "Criar uma billing policy",
+      "Criar um canal privado no Teams",
+      "Criar um conector SMTP"
+    ],
+    answerIndex: 1,
+    explanation: "A billing policy precisa ser criada antes de ser conectada ao serviço de consumo. Os outros itens não são passos centrais do fluxo administrativo de cobrança por consumo."
+  },
+  {
+    question: "O que uma billing policy pode definir?",
+    options: [
+      "Somente fonte tipográfica do tenant",
+      "Escopo de usuários como todos ou um grupo específico",
+      "Somente tamanho de caixa postal",
+      "Apenas idioma do portal"
+    ],
+    answerIndex: 1,
+    explanation: "Uma billing policy pode definir o escopo de usuários cobertos pelo consumo, como todos ou um grupo específico. Ela não existe para configurar fontes, mailbox size ou idioma."
+  },
+  {
+    question: "Após criar a billing policy, qual é o próximo passo lógico?",
+    options: [
+      "Habilitar DHCP",
+      "Conectar a política a um serviço pay-as-you-go",
+      "Criar uma sandbox do Teams",
+      "Mover o tenant para outra região"
+    ],
+    answerIndex: 1,
+    explanation: "Depois de criar a política, ela precisa ser conectada ao serviço pay-as-you-go que será faturado. Sem essa conexão, a política existe, mas não está em uso."
+  },
+  {
+    question: "Onde o administrador pode acompanhar custos de pay-as-you-go do Copilot no Microsoft 365?",
+    options: [
+      "Billing > Cost Management",
+      "OneDrive > Sync",
+      "Teams > Calls",
+      "Outlook > Rules"
+    ],
+    answerIndex: 0,
+    explanation: "Billing > Cost Management é a superfície apropriada para acompanhar custos do consumo. As outras opções tratam de funcionalidades sem relação com monitoramento financeiro."
+  },
+  {
+    question: "Qual afirmação é correta sobre atualização de custos em Microsoft Cost Management?",
+    options: [
+      "O custo aparece sempre em segundos",
+      "Pode levar algum tempo para refletir o uso",
+      "Nunca atualiza",
+      "Só atualiza uma vez por ano"
+    ],
+    answerIndex: 1,
+    explanation: "O monitoramento de custo não é instantâneo em todos os casos. Pode haver atraso até que o consumo seja consolidado. Isso não significa ausência de dados nem atualização anual."
+  },
+  {
+    question: "Qual é a principal diferença entre licença mensal e pay-as-you-go?",
+    options: [
+      "Não existe diferença",
+      "Licença mensal oferece entitlement previsível; pay-as-you-go cobra consumo",
+      "Pay-as-you-go substitui identidade",
+      "Licença mensal só serve para email"
+    ],
+    answerIndex: 1,
+    explanation: "Licença mensal está ligada a um modelo previsível por usuário, enquanto pay-as-you-go depende do consumo do serviço. Billing não substitui identidade nem permissões."
+  },
+  {
+    question: "No Copilot Chat, agentes que acessam dados compartilhados do tenant tendem a ser:",
+    options: [
+      "Sempre gratuitos",
+      "Baseados em consumo medido",
+      "Exclusivos de SharePoint Server local",
+      "Independentes de cobrança"
+    ],
+    answerIndex: 1,
+    explanation: "Quando agentes acessam dados compartilhados do tenant em cenários específicos, o modelo tende a ser de consumo medido. Isso não significa que todo agente seja gratuito ou sem billing."
+  },
+  {
+    question: "Para usuários com licença Microsoft 365 Copilot, o uso de agentes em geral:",
+    options: [
+      "Exige sempre compra separada por agente",
+      "Pode vir acompanhado do licenciamento principal, conforme o cenário suportado",
+      "Só funciona com conta pessoal Microsoft",
+      "Não depende de identidade"
+    ],
+    answerIndex: 1,
+    explanation: "Em cenários suportados, o uso de agentes pode estar incluído no contexto do licenciamento do Microsoft 365 Copilot. Ainda assim, o acesso continua dependente de identidade, permissões e governança."
+  },
+  {
+    question: "Em um cenário de grande imprevisibilidade de uso, a opção mais alinhada tende a ser:",
+    options: [
+      "Cobrança por consumo",
+      "Licença fixa para um recurso quase nunca usado",
+      "Sem política de billing",
+      "Desabilitar identidades"
+    ],
+    answerIndex: 0,
+    explanation: "Quando o uso é variável e imprevisível, cobrança por consumo pode ser mais aderente. Uma licença fixa pode não ser o modelo mais eficiente em custo nesse cenário."
+  },
+  {
+    question: "Qual ação ajuda a controlar gastos em pay-as-you-go?",
+    options: [
+      "Ignorar billing policies",
+      "Criar orçamento e monitorar uso/custo",
+      "Desabilitar auditoria",
+      "Remover grupos de segurança"
+    ],
+    answerIndex: 1,
+    explanation: "Criar orçamento e acompanhar uso/custo é uma boa prática de governança financeira. Ignorar políticas ou remover recursos sem critério não resolve o problema de monitoramento."
+  },
+
+  {
+    question: "Qual princípio está no centro da estratégia Zero Trust?",
+    options: [
+      "Confiar implicitamente na rede interna",
+      "Verificar explicitamente",
+      "Compartilhar tudo por padrão",
+      "Desabilitar MFA"
+    ],
+    answerIndex: 1,
+    explanation: "Zero Trust se baseia em verificar explicitamente, aplicar menor privilégio e assumir violação. Confiar automaticamente no ambiente interno vai contra esse modelo."
+  },
+  {
+    question: "O que a autenticação responde?",
+    options: [
+      "O que o usuário pode fazer",
+      "Quem é o usuário",
+      "Quanto custa a licença",
+      "Onde está o site"
+    ],
+    answerIndex: 1,
+    explanation: "Autenticação trata de provar identidade: quem é o usuário. Já autorização responde o que essa identidade pode acessar ou fazer."
+  },
+  {
+    question: "O que a autorização determina?",
+    options: [
+      "Quais ações e recursos uma identidade autenticada pode acessar",
+      "Se o usuário possui endereço de email",
+      "Se o tenant tem SharePoint",
+      "Se o prompt foi bem escrito"
+    ],
+    answerIndex: 0,
+    explanation: "Autorização trata de permissões e escopo de acesso depois que a identidade já foi validada. Não tem relação com qualidade do prompt nem com a existência do tenant."
+  },
+  {
+    question: "O que melhor descreve o Single Sign-On (SSO)?",
+    options: [
+      "Um segundo fator de autenticação",
+      "Um mecanismo para reduzir múltiplos prompts de login entre aplicativos",
+      "Um tipo de DLP",
+      "Um relatório de eDiscovery"
+    ],
+    answerIndex: 1,
+    explanation: "SSO melhora a experiência do usuário ao permitir reutilização da autenticação entre apps. Não é o mesmo que MFA e não é uma solução de conformidade."
+  },
+  {
+    question: "O Conditional Access é descrito como:",
+    options: [
+      "Um antivírus local",
+      "O motor de políticas Zero Trust da Microsoft",
+      "Um recurso exclusivo do Exchange",
+      "Um tipo de licença de email"
+    ],
+    answerIndex: 1,
+    explanation: "Conditional Access é o mecanismo de políticas que usa sinais contextuais para aplicar decisões de acesso. Não é antivírus, nem licença, nem algo limitado ao Exchange."
+  },
+  {
+    question: "Qual combinação representa corretamente sinais usados pelo Conditional Access?",
+    options: [
+      "Usuário, dispositivo, localização e risco",
+      "Somente nome do arquivo",
+      "Apenas horário do Outlook",
+      "Apenas impressora padrão"
+    ],
+    answerIndex: 0,
+    explanation: "Conditional Access combina sinais como usuário, dispositivo, localização, aplicativo e risco para tomar decisões. As outras opções são excessivamente limitadas ou irrelevantes."
+  },
+  {
+    question: "Em termos simples, políticas de Conditional Access funcionam como:",
+    options: [
+      "Fórmulas de Excel",
+      "Regras do tipo 'se-então'",
+      "Grupos de distribuição",
+      "Backups locais"
+    ],
+    answerIndex: 1,
+    explanation: "A lógica de Conditional Access é frequentemente explicada como 'se uma condição ocorrer, então aplique uma ação'. Isso traduz bem o comportamento de políticas contextuais."
+  },
+  {
+    question: "Quando o Conditional Access é avaliado no fluxo de acesso?",
+    options: [
+      "Antes da identidade existir",
+      "Depois da autenticação de primeiro fator",
+      "Só após exportação de dados",
+      "Apenas em sites públicos"
+    ],
+    answerIndex: 1,
+    explanation: "Conditional Access é aplicado após a autenticação de primeiro fator. Isso permite usar sinais contextuais para decidir se bloqueia, permite ou exige controles adicionais."
+  },
+  {
+    question: "O que o MFA adiciona ao processo de segurança?",
+    options: [
+      "Um nome mais longo ao usuário",
+      "Mais de um fator de validação de identidade",
+      "Apenas criptografia de email",
+      "Compartilhamento externo automático"
+    ],
+    answerIndex: 1,
+    explanation: "MFA exige múltiplos fatores de autenticação, reduzindo risco de comprometimento de conta. Não é mecanismo de criptografia de email nem de compartilhamento."
+  },
+  {
+    question: "Qual exemplo é um método passwordless?",
+    options: [
+      "FIDO2 ou Windows Hello for Business",
+      "SMTP relay",
+      "Retention label",
+      "eDiscovery case"
+    ],
+    answerIndex: 0,
+    explanation: "FIDO2 e Windows Hello for Business são exemplos clássicos de autenticação passwordless. Os demais itens pertencem a outros domínios técnicos."
+  },
+  {
+    question: "Qual recurso ajuda a aplicar privilégio administrativo just-in-time?",
+    options: [
+      "PIM",
+      "Teams Live Event",
+      "Delve",
+      "Viva Glint"
+    ],
+    answerIndex: 0,
+    explanation: "PIM ajuda a reduzir privilégio permanente, permitindo ativação sob demanda. Isso apoia o princípio de menor privilégio em ambientes modernos."
+  },
+  {
+    question: "O que é um benefício de usar PIM sob a ótica Zero Trust?",
+    options: [
+      "Aumentar privilégio permanente",
+      "Reduzir exposição de contas altamente privilegiadas",
+      "Remover auditoria",
+      "Desabilitar grupos"
+    ],
+    answerIndex: 1,
+    explanation: "PIM reduz o tempo em que privilégios elevados ficam ativos, diminuindo superfície de risco. Isso é mais alinhado ao Zero Trust do que manter privilégios permanentes."
+  },
+  {
+    question: "Em qual tipo de ferramenta você revisaria logs de atividade de usuário e administrador?",
+    options: [
+      "Ferramenta de auditoria/logs",
+      "Biblioteca de fotos",
+      "Planner",
+      "Whiteboard"
+    ],
+    answerIndex: 0,
+    explanation: "Logs de atividade são revisados em ferramentas de auditoria apropriadas. Planner, Whiteboard e biblioteca de fotos não são superfícies primárias para investigação administrativa."
+  },
+  {
+    question: "Qual item ajuda a avaliar postura de segurança de identidade no Entra?",
+    options: [
+      "Identity Secure Score",
+      "Site usage report",
+      "Viva Pulse",
+      "Outlook categories"
+    ],
+    answerIndex: 0,
+    explanation: "Identity Secure Score ajuda a entender postura de segurança e oportunidades de melhoria no contexto de identidade. As demais opções não têm esse objetivo principal."
+  },
+  {
+    question: "Security Defaults e Conditional Access normalmente:",
+    options: [
+      "Devem ser combinados livremente como se fossem a mesma abordagem",
+      "Não são pensados para serem usados juntos da mesma forma que políticas customizadas",
+      "São exatamente a mesma coisa",
+      "Só existem para usuários convidados"
+    ],
+    answerIndex: 1,
+    explanation: "Security Defaults e Conditional Access têm propósitos relacionados, mas não devem ser tratados como camadas equivalentes e combinadas sem planejamento. Conditional Access oferece granularidade maior."
+  },
+
+  {
+    question: "O principal objetivo do Microsoft Defender XDR é:",
+    options: [
+      "Organizar bibliotecas do SharePoint",
+      "Unificar proteção, investigação e resposta contra ameaças em vários domínios",
+      "Criar labels de retenção",
+      "Administrar domínio DNS"
+    ],
+    answerIndex: 1,
+    explanation: "Defender XDR consolida sinais e resposta de segurança em uma experiência integrada. Ele não existe para governança de bibliotecas nem para administração de DNS."
+  },
+  {
+    question: "Em um cenário com sinais suspeitos em identidade, endpoint e email, a abordagem mais alinhada com Defender XDR é:",
+    options: [
+      "Analisar tudo separadamente sem correlação",
+      "Correlacionar os sinais em uma visão integrada",
+      "Desativar logs",
+      "Mover os emails para arquivo morto"
+    ],
+    answerIndex: 1,
+    explanation: "A força de uma solução XDR está na correlação entre múltiplos sinais de segurança. Tratar tudo de forma isolada reduz contexto e capacidade de resposta."
+  },
+  {
+    question: "Qual é uma vantagem de uma plataforma XDR?",
+    options: [
+      "Menor visibilidade",
+      "Melhor priorização e investigação de incidentes",
+      "Ausência de telemetria",
+      "Eliminação de identidade"
+    ],
+    answerIndex: 1,
+    explanation: "Uma plataforma XDR melhora visibilidade, correlação e priorização de incidentes. Menor visibilidade e ausência de telemetria seriam efeitos opostos ao objetivo da solução."
+  },
+  {
+    question: "Defender XDR está mais associado a:",
+    options: [
+      "Threat protection e incident response",
+      "Gestão de bibliotecas",
+      "Criação de canais",
+      "Cadastro de domínios"
+    ],
+    answerIndex: 0,
+    explanation: "Defender XDR está ligado a proteção contra ameaças, detecção, investigação e resposta. As outras opções pertencem a áreas administrativas diferentes."
+  },
+  {
+    question: "Se o exame trouxer um cenário sobre proteção moderna com múltiplos sinais, o serviço mais alinhado é:",
+    options: [
+      "Defender XDR",
+      "Content Explorer",
+      "Delve",
+      "Bookings"
+    ],
+    answerIndex: 0,
+    explanation: "Quando o foco é correlação de sinais de segurança e resposta integrada a incidentes, Defender XDR é a melhor opção. Content Explorer e Delve têm propósitos distintos."
+  },
+
+  {
+    question: "Qual solução do Purview ajuda a classificar e proteger conteúdo sensível?",
+    options: [
+      "Information Protection",
+      "Teams Phone",
+      "Power BI Embedded",
+      "DHCP"
+    ],
+    answerIndex: 0,
+    explanation: "Microsoft Purview Information Protection é a solução relacionada à classificação, rotulagem e proteção de conteúdo sensível. As outras opções não têm essa finalidade."
+  },
+  {
+    question: "Qual é um uso típico de sensitivity labels?",
+    options: [
+      "Definir senha do Wi-Fi",
+      "Aplicar classificação, marcação e, em alguns cenários, proteção ao conteúdo",
+      "Criar billing policy",
+      "Substituir grupos"
+    ],
+    answerIndex: 1,
+    explanation: "Sensitivity labels ajudam a classificar o conteúdo e, dependendo da política, também podem aplicar proteção. Elas não existem para rede sem fio, cobrança ou substituição de grupos."
+  },
+  {
+    question: "Quando uma sensitivity label aplica criptografia, o efeito principal é:",
+    options: [
+      "Melhorar resolução da imagem",
+      "Restringir acesso conforme política de proteção",
+      "Apagar o arquivo",
+      "Tornar o site público"
+    ],
+    answerIndex: 1,
+    explanation: "Quando há criptografia associada à label, o objetivo é proteger o conteúdo e limitar acesso conforme regras definidas. Não há relação com qualidade de imagem nem com publicação do site."
+  },
+  {
+    question: "Qual recurso do Purview ajuda a evitar vazamento ou oversharing de dados sensíveis?",
+    options: [
+      "DLP",
+      "Viva Learning",
+      "Bookings",
+      "Sway"
+    ],
+    answerIndex: 0,
+    explanation: "DLP monitora e ajuda a evitar compartilhamento indevido ou exfiltração de dados sensíveis. As outras opções não são soluções primárias de proteção contra perda de dados."
+  },
+  {
+    question: "Um 'policy tip' em DLP serve para:",
+    options: [
+      "Configurar IP fixo",
+      "Informar e orientar o usuário no momento da ação",
+      "Criar licença",
+      "Reindexar eDiscovery"
+    ],
+    answerIndex: 1,
+    explanation: "Policy tips ajudam a educar o usuário em tempo real sobre uma ação potencialmente inadequada. Eles não são mecanismos de rede, licenciamento ou reindexação."
+  },
+  {
+    question: "Em termos de governança, labels ajudam o Copilot porque:",
+    options: [
+      "Substituem a identidade do usuário",
+      "Fornecem guardrails de acesso e proteção para dados sensíveis",
+      "Desabilitam o SharePoint",
+      "Eliminam permissões"
+    ],
+    answerIndex: 1,
+    explanation: "Labels e políticas de proteção ajudam a impor limites e controles sobre conteúdo sensível, o que é importante em cenários com Copilot. Elas não substituem identidade nem permissões."
+  },
+  {
+    question: "Qual solução do Purview se preocupa mais com impedir exfiltração acidental ou indevida de dados?",
+    options: [
+      "DLP",
+      "Exchange transport rule apenas",
+      "Whiteboard",
+      "Teams avatar"
+    ],
+    answerIndex: 0,
+    explanation: "DLP é a solução mais diretamente associada à prevenção de perda de dados e exfiltração. Regras de transporte podem ajudar em email, mas não substituem a abrangência do DLP."
+  },
+  {
+    question: "Classificação de dados no Purview ajuda a organização porque:",
+    options: [
+      "Remove todos os riscos automaticamente",
+      "Permite identificar e entender onde estão dados sensíveis",
+      "Elimina a necessidade de permissões",
+      "Substitui eDiscovery"
+    ],
+    answerIndex: 1,
+    explanation: "Classificação ajuda a localizar, entender e proteger dados sensíveis. Ela não remove todos os riscos sozinha, nem substitui o modelo de permissões ou ferramentas de investigação."
+  },
+  {
+    question: "O uso de labels visíveis, como marcações ou watermarks, contribui principalmente para:",
+    options: [
+      "Reduzir percepção de sensibilidade",
+      "Aumentar conscientização sobre o tipo de conteúdo",
+      "Criar grupos automaticamente",
+      "Configurar billing"
+    ],
+    answerIndex: 1,
+    explanation: "Marcas visíveis ajudam a conscientizar os usuários sobre a sensibilidade do conteúdo e reforçam a política de proteção. Não criam grupos nem atuam sobre cobrança."
+  },
+  {
+    question: "Se a pergunta do exame tratar de 'proteger conteúdo com base em sensibilidade', o recurso mais direto é:",
+    options: [
+      "Sensitivity labels",
+      "Cost Management",
+      "Teams policy",
+      "Forms"
+    ],
+    answerIndex: 0,
+    explanation: "Sensitivity labels são o recurso mais diretamente associado à classificação e proteção com base em sensibilidade. Cost Management e Teams policy tratam de outros domínios."
+  },
+  {
+    question: "DLP é mais adequado para qual cenário?",
+    options: [
+      "Bloquear ou alertar sobre compartilhamento indevido de dados sensíveis",
+      "Criar salas de reunião",
+      "Fazer onboarding",
+      "Atualizar wallpaper"
+    ],
+    answerIndex: 0,
+    explanation: "DLP é voltado para prevenir perda de dados, incluindo alertas, bloqueios e orientação ao usuário. Não foi feito para reunião, onboarding ou personalização visual."
+  },
+  {
+    question: "Information Protection e DLP se complementam porque:",
+    options: [
+      "Um classifica/protege e o outro ajuda a prevenir compartilhamentos indevidos",
+      "São exatamente a mesma funcionalidade",
+      "Um substitui o outro completamente",
+      "Nenhum deles atua sobre dados"
+    ],
+    answerIndex: 0,
+    explanation: "Information Protection e DLP atuam em camadas complementares: um trata de classificação/proteção e o outro de prevenção de perda e uso indevido. Não são idênticos."
+  },
+  {
+    question: "Qual afirmação é correta sobre labels e proteção?",
+    options: [
+      "Toda label obrigatoriamente criptografa",
+      "Labels podem classificar e, dependendo da configuração, também proteger",
+      "Labels só existem para sites",
+      "Labels apagam logs"
+    ],
+    answerIndex: 1,
+    explanation: "Nem toda label criptografa, mas labels podem classificar e também aplicar proteção conforme a política. Elas não se limitam a sites e não apagam logs."
+  },
+  {
+    question: "Em um ambiente com Copilot, classificar o conteúdo ajuda principalmente a:",
+    options: [
+      "Reduzir a necessidade de tenant",
+      "Melhorar governança e aplicar controles adequados aos dados",
+      "Excluir bibliotecas antigas automaticamente",
+      "Remover Conditional Access"
+    ],
+    answerIndex: 1,
+    explanation: "Classificar conteúdo melhora a capacidade de aplicar controles coerentes com a sensibilidade dos dados. Isso fortalece a governança do ambiente usado pelo Copilot."
+  },
+  {
+    question: "Se você precisa descobrir itens classificados e entender sua distribuição, isso se relaciona mais com:",
+    options: [
+      "Funcionalidades de classificação e exploração de dados no Purview",
+      "Teams meeting recap",
+      "Planner charts",
+      "PowerPoint themes"
+    ],
+    answerIndex: 0,
+    explanation: "Explorar e entender distribuição de dados classificados é um cenário típico do Purview. As demais opções pertencem a contextos sem foco em classificação de dados."
+  },
+
+  {
+    question: "Qual solução do Purview identifica padrões de atividade que podem indicar risco interno?",
+    options: [
+      "Insider Risk Management",
+      "SharePoint migration tool",
+      "Bookings",
+      "Planner"
+    ],
+    answerIndex: 0,
+    explanation: "Insider Risk Management ajuda a identificar atividades potencialmente arriscadas praticadas por usuários internos. As outras opções não têm esse foco de risco comportamental."
+  },
+  {
+    question: "Communication Compliance é mais adequada para:",
+    options: [
+      "Monitorar certos tipos de comunicações conforme políticas de conformidade",
+      "Criar billing policies",
+      "Proteger endpoint com antimalware",
+      "Administrar DNS"
+    ],
+    answerIndex: 0,
+    explanation: "Communication Compliance existe para supervisionar e analisar comunicações em cenários de conformidade e risco. Não é ferramenta de billing, antimalware ou DNS."
+  },
+  {
+    question: "DSPM for AI tem foco principal em:",
+    options: [
+      "Gerenciar impressoras",
+      "Entender e reduzir riscos relacionados a dados e exposição em cenários de IA",
+      "Criar canais do Teams",
+      "Configurar quotas de mailbox"
+    ],
+    answerIndex: 1,
+    explanation: "DSPM for AI trata da postura de segurança de dados em cenários de IA, ajudando a entender exposição e risco. Não é recurso de impressão, Teams ou quota de caixa postal."
+  },
+  {
+    question: "Qual conceito é central em Data Lifecycle Management?",
+    options: [
+      "Reter ou excluir conteúdo conforme políticas ao longo do tempo",
+      "Criar usuários convidados",
+      "Instalar agente no laptop",
+      "Gerar prompt automaticamente"
+    ],
+    answerIndex: 0,
+    explanation: "Data Lifecycle Management trata do ciclo de vida dos dados, incluindo retenção e exclusão conforme política. Não tem como objetivo criar usuários ou automatizar prompts."
+  },
+  {
+    question: "O que melhor descreve retenção?",
+    options: [
+      "Tornar todo conteúdo público",
+      "Manter conteúdo pelo período exigido e tratá-lo conforme política",
+      "Ignorar legislação",
+      "Bloquear MFA"
+    ],
+    answerIndex: 1,
+    explanation: "Retenção define por quanto tempo o conteúdo deve ser preservado e como ele será tratado conforme políticas e requisitos. Não tem relação com tornar conteúdo público ou bloquear MFA."
+  },
+  {
+    question: "Adaptive Protection integra sinais de Insider Risk com quais tipos de controle?",
+    options: [
+      "DLP, Data Lifecycle e Conditional Access",
+      "Apenas regras do Exchange",
+      "Apenas OneNote",
+      "Apenas Planner"
+    ],
+    answerIndex: 0,
+    explanation: "Adaptive Protection pode combinar sinais de risco com controles como DLP, Data Lifecycle Management e Conditional Access. Isso permite respostas mais proporcionais ao risco."
+  },
+  {
+    question: "Em um cenário de usuário de alto risco interno, uma integração útil é:",
+    options: [
+      "Aplicar políticas mais restritivas dinamicamente",
+      "Desligar toda a organização",
+      "Remover todos os sites",
+      "Desabilitar auditoria"
+    ],
+    answerIndex: 0,
+    explanation: "A ideia é aplicar controles adequados ao nível de risco do usuário, não tomar medidas indiscriminadas ou reduzir visibilidade. Desabilitar auditoria pioraria a governança."
+  },
+  {
+    question: "O Compliance Manager ajuda principalmente a:",
+    options: [
+      "Avaliar e gerenciar conformidade com controles, avaliações e ações de melhoria",
+      "Criar canais privados",
+      "Hospedar bibliotecas",
+      "Fazer troubleshooting de impressora"
+    ],
+    answerIndex: 0,
+    explanation: "Compliance Manager organiza avaliações, controles e improvement actions para apoiar conformidade. Ele não substitui plataformas de colaboração nem é ferramenta de suporte de impressora."
+  },
+  {
+    question: "O 'compliance score' do Compliance Manager serve para:",
+    options: [
+      "Medir maturidade de jogo no Teams",
+      "Priorizar ações de melhoria na postura de conformidade",
+      "Substituir identidades",
+      "Gerar licenças"
+    ],
+    answerIndex: 1,
+    explanation: "Compliance score ajuda a entender a postura atual e a priorizar ações que reduzam risco de conformidade. Não substitui identidade nem gera licenças."
+  },
+  {
+    question: "O que são 'improvement actions' no Compliance Manager?",
+    options: [
+      "Ações sugeridas ou gerenciadas para melhorar aderência a requisitos",
+      "Mensagens do Outlook",
+      "Grupos de segurança",
+      "Pastas pessoais"
+    ],
+    answerIndex: 0,
+    explanation: "Improvement actions são tarefas e orientações para melhorar a aderência a padrões, regulamentos ou políticas. Não são mensagens nem objetos de armazenamento."
+  },
+  {
+    question: "Qual afirmação é correta sobre Compliance Manager?",
+    options: [
+      "Ele só serve para Microsoft 365 local",
+      "Pode apoiar avaliação de conformidade inclusive em cenários multicloud",
+      "Substitui todo o Purview",
+      "Não usa avaliações"
+    ],
+    answerIndex: 1,
+    explanation: "Compliance Manager pode apoiar gestão de conformidade além do ambiente mais restrito do Microsoft 365. Ele não substitui todo o Purview e depende de avaliações e controles."
+  },
+  {
+    question: "Se a pergunta citar 'inventário de riscos de proteção de dados, controles, regulações e ações de melhoria', a resposta mais provável é:",
+    options: [
+      "Compliance Manager",
+      "SharePoint site usage",
+      "Teams calls",
+      "Windows Backup"
+    ],
+    answerIndex: 0,
+    explanation: "Esses elementos são típicos do Compliance Manager: avaliações, controles, improvement actions e visão de conformidade. Os demais itens não cobrem esse conjunto."
+  },
+  {
+    question: "Data Lifecycle Management é relevante para Copilot porque:",
+    options: [
+      "Mantém dados inúteis para sempre",
+      "Ajuda a garantir que o conteúdo siga políticas de retenção e descarte",
+      "Elimina necessidade de labels",
+      "Troca a licença do usuário"
+    ],
+    answerIndex: 1,
+    explanation: "Governar o ciclo de vida dos dados ajuda a manter o ambiente mais coerente e alinhado a políticas. Não substitui labels nem altera licenças."
+  },
+  {
+    question: "Communication Compliance é mais sobre:",
+    options: [
+      "Observabilidade de comunicações segundo políticas e riscos específicos",
+      "Administração de impressoras",
+      "Criação de usuários",
+      "Backup físico"
+    ],
+    answerIndex: 0,
+    explanation: "Communication Compliance monitora e analisa comunicações em cenários determinados por política. Não é ferramenta de criação de usuários ou infraestrutura física."
+  },
+  {
+    question: "DSPM for AI e SharePoint/Purview se conectam no objetivo de:",
+    options: [
+      "Aumentar oversharing",
+      "Entender exposição de dados e melhorar postura para uso de IA",
+      "Remover SSO",
+      "Desativar grupos"
+    ],
+    answerIndex: 1,
+    explanation: "DSPM for AI apoia o entendimento de risco e exposição de dados em cenários de IA. Isso se conecta à governança e remediação de oversharing, não à remoção de SSO ou grupos."
+  },
+
+  {
+    question: "O Activity Explorer mostra principalmente:",
+    options: [
+      "Custos do Azure",
+      "Atividades realizadas sobre conteúdo rotulado ou classificado",
+      "Apenas domínios DNS",
+      "Somente canais do Teams"
+    ],
+    answerIndex: 1,
+    explanation: "Activity Explorer ajuda a visualizar atividades relacionadas a conteúdo rotulado/classificado. Ele não é uma ferramenta de custo, DNS ou organização de canais."
+  },
+  {
+    question: "De onde vem a base de dados usada pelo Activity Explorer?",
+    options: [
+      "Somente logs locais do notebook",
+      "Unified audit logs do Microsoft 365",
+      "DHCP server",
+      "Impressora de rede"
+    ],
+    answerIndex: 1,
+    explanation: "O Activity Explorer se apoia nos logs unificados de auditoria do Microsoft 365. As demais opções não representam a fonte correta desse tipo de observabilidade."
+  },
+  {
+    question: "Qual ferramenta permite investigar 'o que aconteceu' com conteúdo protegido ou rotulado?",
+    options: [
+      "Activity Explorer",
+      "Bookings",
+      "Teams calendar",
+      "Delve"
+    ],
+    answerIndex: 0,
+    explanation: "Se a necessidade é entender atividades relacionadas ao conteúdo protegido, Activity Explorer é a melhor escolha. Bookings e calendário do Teams têm finalidades diferentes."
+  },
+  {
+    question: "O Data Explorer é mais sensível em termos de acesso porque:",
+    options: [
+      "Permite visualizar conteúdo de itens analisados",
+      "Só mostra tema visual",
+      "Não possui dados",
+      "Não exige permissões"
+    ],
+    answerIndex: 0,
+    explanation: "Data Explorer pode permitir visualização de conteúdo, por isso o acesso é mais restrito. Não se trata apenas de tema visual, e definitivamente exige permissões apropriadas."
+  },
+  {
+    question: "Qual afirmação sobre o Data Explorer está correta?",
+    options: [
+      "Qualquer usuário pode ver conteúdo sem função",
+      "O acesso é altamente restrito devido à sensibilidade do conteúdo exibido",
+      "Só funciona offline",
+      "É igual ao Teams chat"
+    ],
+    answerIndex: 1,
+    explanation: "Data Explorer exige controle rigoroso porque pode expor conteúdo sensível. Não é aberto a qualquer usuário e não tem relação com o modelo de uso do chat do Teams."
+  },
+  {
+    question: "O Content Explorer ajuda mais diretamente a:",
+    options: [
+      "Ver o resumo e a lista de itens sensíveis encontrados",
+      "Configurar impressoras",
+      "Criar billing policy",
+      "Agendar reunião"
+    ],
+    answerIndex: 0,
+    explanation: "Content Explorer ajuda a localizar e visualizar a distribuição de itens sensíveis, conforme permissões. Não serve para billing, impressão ou agenda."
+  },
+  {
+    question: "Qual dupla melhor diferencia Activity Explorer e Content/Data Explorer?",
+    options: [
+      "Activity = ações; Content/Data = itens e conteúdo",
+      "Activity = licenças; Content = DNS",
+      "Activity = reuniões; Data = calendário",
+      "São idênticos"
+    ],
+    answerIndex: 0,
+    explanation: "Activity Explorer mostra o que foi feito com o conteúdo; Content/Data Explorer mostra itens, locais e, em alguns casos, o conteúdo em si. Eles se complementam, mas não são iguais."
+  },
+  {
+    question: "O eDiscovery no Purview serve para:",
+    options: [
+      "Identificar, revisar e gerenciar conteúdo eletrônico para investigações e casos legais",
+      "Criar labels visuais",
+      "Gerenciar MFA",
+      "Publicar agentes"
+    ],
+    answerIndex: 0,
+    explanation: "eDiscovery é a solução para descoberta eletrônica em investigações e casos legais. Labels, MFA e publicação de agentes pertencem a outros domínios."
+  },
+  {
+    question: "Qual afirmação é correta sobre eDiscovery atual no Purview?",
+    options: [
+      "Content Search foi incorporado à experiência de busca do eDiscovery",
+      "eDiscovery só busca SharePoint",
+      "Não trabalha com mailboxes",
+      "Não exporta resultados"
+    ],
+    answerIndex: 0,
+    explanation: "A experiência moderna de eDiscovery incorpora os recursos de Content Search. eDiscovery não é limitado ao SharePoint e trabalha com múltiplas fontes, inclusive mailboxes."
+  },
+  {
+    question: "Em um caso que precisa localizar emails e arquivos relacionados a uma investigação, a solução mais apropriada é:",
+    options: [
+      "eDiscovery",
+      "Microsoft Forms",
+      "Viva Connections",
+      "OneNote"
+    ],
+    answerIndex: 0,
+    explanation: "Quando o objetivo é localizar e revisar conteúdo eletrônico em múltiplos workloads, eDiscovery é a opção correta. Forms e OneNote não substituem esse processo investigativo."
+  },
+
+  {
+    question: "O que 'oversharing' significa no contexto do Microsoft 365 Copilot?",
+    options: [
+      "Compartilhamento excessivo ou indevido de conteúdo e permissões além do necessário",
+      "Uso de duas licenças no mesmo usuário",
+      "Ter muitos canais do Teams",
+      "Fazer backup em excesso"
+    ],
+    answerIndex: 0,
+    explanation: "Oversharing é exposição excessiva de dados ou permissões, o que pode impactar o que o Copilot consegue acessar em cenários permission-trimmed. Não tem relação com quantidade de canais ou backups."
+  },
+  {
+    question: "O SharePoint Advanced Management (SAM) ajuda principalmente em quais três frentes?",
+    options: [
+      "Conteúdo, ciclo de vida e permissões/acesso",
+      "Impressão, scanner e fax",
+      "DNS, DHCP e VPN",
+      "Payroll, CRM e ERP"
+    ],
+    answerIndex: 0,
+    explanation: "SAM apoia governança de conteúdo, lifecycle e gestão de acesso/permissões em SharePoint e OneDrive. As outras opções pertencem a domínios totalmente diferentes."
+  },
+  {
+    question: "Qual é um objetivo do SAM ao preparar o ambiente para Copilot?",
+    options: [
+      "Aumentar conteúdo obsoleto",
+      "Reduzir oversharing e melhorar governança",
+      "Eliminar sites",
+      "Remover todas as bibliotecas"
+    ],
+    answerIndex: 1,
+    explanation: "SAM ajuda a reduzir exposição indevida e a melhorar a governança do conteúdo que pode ser acessado via Copilot. Não existe para eliminar o ambiente ou aumentar desorganização."
+  },
+  {
+    question: "Um relatório de Data Access Governance no SharePoint ajuda a:",
+    options: [
+      "Identificar sites com conteúdo potencialmente overshared ou sensível",
+      "Criar caixas postais",
+      "Configurar MFA",
+      "Gerar score de certificação"
+    ],
+    answerIndex: 0,
+    explanation: "Relatórios de Data Access Governance ajudam a encontrar áreas com maior risco de exposição ou dados sensíveis. Não criam mailboxes nem substituem recursos de identidade."
+  },
+  {
+    question: "Em um cenário de preparação para Copilot, uma boa prática é:",
+    options: [
+      "Manter links amplos por padrão sem revisão",
+      "Rever sharing settings e preferir links mais restritivos quando adequado",
+      "Tornar todos os sites públicos",
+      "Remover owners de sites"
+    ],
+    answerIndex: 1,
+    explanation: "Reduzir compartilhamento amplo e preferir configurações mais restritivas ajuda a minimizar oversharing. Tornar tudo público ou remover owners enfraquece a governança."
+  },
+  {
+    question: "Garantir owners válidos em todos os sites ajuda porque:",
+    options: [
+      "Remove a necessidade de permissões",
+      "Melhora accountability e governança do conteúdo",
+      "Substitui labels",
+      "Impede login"
+    ],
+    answerIndex: 1,
+    explanation: "Ter owners válidos melhora responsabilidade sobre acesso, ciclo de vida e qualidade do conteúdo. Isso não elimina permissões nem substitui classificações."
+  },
+  {
+    question: "Em relação ao Copilot, conteúdo desatualizado ou mal governado pode:",
+    options: [
+      "Melhorar sempre a qualidade da resposta",
+      "Aumentar risco de respostas baseadas em dados inadequados",
+      "Não ter nenhum impacto",
+      "Desligar o tenant"
+    ],
+    answerIndex: 1,
+    explanation: "Se os dados estiverem desatualizados, redundantes ou expostos indevidamente, isso pode afetar a utilidade e a segurança do uso do Copilot. O impacto não é inexistente."
+  },
+
+  {
+    question: "O que são scheduled prompts no Microsoft 365 Copilot?",
+    options: [
+      "Emails recorrentes do Exchange",
+      "Interações com Copilot agendadas para horários e frequências específicos",
+      "Labels automáticas do Purview",
+      "Regras de antivírus"
+    ],
+    answerIndex: 1,
+    explanation: "Scheduled prompts automatizam interações do Copilot em horários definidos. Eles não são emails recorrentes, labels ou mecanismos de antivírus."
+  },
+  {
+    question: "Qual condição administrativa pode desabilitar a disponibilidade de scheduled prompts para a organização?",
+    options: [
+      "Desabilitar optional connected experiences",
+      "Apagar um canal do Teams",
+      "Remover um grupo do Outlook",
+      "Limitar tamanho de mailbox"
+    ],
+    answerIndex: 0,
+    explanation: "Scheduled prompts dependem de optional connected experiences. Se esse recurso for desabilitado por política, a funcionalidade deixa de ficar disponível."
+  },
+  {
+    question: "Quando usuários usam scheduled prompts pela primeira vez, o Power Platform:",
+    options: [
+      "Exige que o admin crie manualmente vários ambientes",
+      "Cria automaticamente um ambiente Microsoft 365 por tenant para suportar a execução",
+      "Cria um site clássico no SharePoint",
+      "Desabilita DLP do tenant inteiro"
+    ],
+    answerIndex: 1,
+    explanation: "O ambiente Microsoft 365 no Power Platform é criado automaticamente para suportar o runtime dos scheduled prompts. Isso não exige uma criação manual extensa e não desabilita DLP do tenant inteiro."
+  },
+  {
+    question: "Qual ação faz parte do ciclo de vida de um agente no Microsoft 365 admin center?",
+    options: [
+      "Publicar, atribuir, implantar, remover ou bloquear",
+      "Somente renomear usuário",
+      "Apenas criar caixa postal",
+      "Apenas instalar impressora"
+    ],
+    answerIndex: 0,
+    explanation: "O ciclo de vida de agentes inclui ações administrativas como publicação, implantação, atribuição, remoção e bloqueio. As outras opções não representam lifecycle de agentes."
+  },
+  {
+    question: "Onde fica o controle central para governança de agentes em muitos cenários do Microsoft 365 Copilot?",
+    options: [
+      "Copilot Control System no Microsoft 365 admin center",
+      "Word desktop options",
+      "Bloco de notas",
+      "Windows Media Player"
+    ],
+    answerIndex: 0,
+    explanation: "A governança administrativa de agentes converge para o Microsoft 365 admin center em cenários suportados. As outras opções não são superfícies de administração corporativa."
+  },
+  {
+    question: "Qual opção descreve melhor um agente do Microsoft 365 Copilot?",
+    options: [
+      "Um wallpaper corporativo",
+      "Uma extensão que combina instruções, conhecimento e habilidades para tarefas específicas",
+      "Uma mailbox oculta",
+      "Um site de comunicação"
+    ],
+    answerIndex: 1,
+    explanation: "Agentes estendem a experiência do Copilot combinando instruções, grounding e capacidades voltadas a tarefas ou cenários específicos. Não são wallpapers, mailboxes ou sites."
+  },
+  {
+    question: "Usuários podem instalar agentes da loja quando:",
+    options: [
+      "O admin permite e o agente está disponível para eles",
+      "Qualquer agente sempre aparece para qualquer usuário",
+      "Não existe governança",
+      "O tenant não tem identidade"
+    ],
+    answerIndex: 0,
+    explanation: "A disponibilidade de agentes depende de governança, políticas e distribuição. Nem todo agente fica automaticamente disponível para qualquer usuário."
+  },
+  {
+    question: "Um objetivo de bloquear ou remover agentes não necessários é:",
+    options: [
+      "Aumentar oversharing",
+      "Reduzir riscos e limitar exposição desnecessária",
+      "Eliminar toda a colaboração",
+      "Desabilitar o Entra"
+    ],
+    answerIndex: 1,
+    explanation: "Bloquear ou remover agentes desnecessários ajuda a reduzir superfície de risco e a limitar exposição. Não serve para eliminar colaboração ou afetar o serviço de identidade."
+  },
+  {
+    question: "Qual papel administrativo é citado na governança de scheduled prompts para inventário?",
+    options: [
+      "Power Platform Administrator",
+      "SharePoint Visitor",
+      "Exchange Viewer apenas",
+      "Teams Guest"
+    ],
+    answerIndex: 0,
+    explanation: "O inventário e determinadas operações administrativas de scheduled prompts usam permissões ligadas ao Power Platform Administrator. Perfis visitantes ou guest não são adequados."
+  },
+  {
+    question: "No ambiente Microsoft 365 criado para scheduled prompts, por padrão os usuários:",
+    options: [
+      "Recebem automaticamente Environment Maker",
+      "Não recebem Environment Maker por padrão",
+      "Podem criar qualquer connector livremente",
+      "Podem publicar bots arbitrariamente"
+    ],
+    answerIndex: 1,
+    explanation: "Esse ambiente é criado com governança controlada. Usuários não recebem automaticamente permissões amplas como Environment Maker, e o uso é restrito ao runtime necessário."
+  }
 ];
 
 
@@ -659,12 +2402,15 @@ const QUESTIONS = [
 let mode = "study"; // "study" | "exam"
 let currentIndex = 0;
 let selectedIndex = null;
+let selectedQuestionCount = 50;
+let pointsPerQuestion = MAX_SCORE / 50;
 
 // score = quantidade de acertos
 let score = 0;
 
 // timer
-let examSecondsTotal = EXAM_MINUTES * 60;
+let examMinutes = 40;
+let examSecondsTotal = examMinutes * 60;
 let remainingSeconds = examSecondsTotal;
 let timerInterval = null;
 
@@ -697,12 +2443,15 @@ function shuffleArray(arr) {
 }
 
 /* ============================
-   PREPARA QUESTÕES (embaralha e recalcula answerIndex se precisar)
+   PREPARA QUESTÕES (embaralha, seleciona qtd e recalcula answerIndex se precisar)
 ============================ */
 function buildWorkingQuestions() {
   let qList = [...QUESTIONS];
 
   if (SHUFFLE_QUESTIONS) qList = shuffleArray(qList);
+
+  // Seleciona apenas a quantidade escolhida
+  qList = qList.slice(0, selectedQuestionCount);
 
   if (SHUFFLE_OPTIONS) {
     qList = qList.map((q) => {
@@ -720,10 +2469,21 @@ function buildWorkingQuestions() {
 }
 
 /* ============================
+   CONFIGURAR DINÂMICO (qty, pontos, timer)
+============================ */
+function setupDynamic() {
+  selectedQuestionCount = getSelectedQty();
+  pointsPerQuestion = MAX_SCORE / selectedQuestionCount;
+  examMinutes = Math.ceil(selectedQuestionCount * 40 / 50);
+  examSecondsTotal = examMinutes * 60;
+}
+
+/* ============================
    START: Simulado (estudo)
 ============================ */
 function startStudy() {
   mode = "study";
+  setupDynamic();
   resetState();
   workingQuestions = buildWorkingQuestions();
   renderQuestion();
@@ -737,6 +2497,7 @@ function startStudy() {
 ============================ */
 function startExam() {
   mode = "exam";
+  setupDynamic();
   resetState();
   workingQuestions = buildWorkingQuestions();
   remainingSeconds = examSecondsTotal;
@@ -859,6 +2620,8 @@ function showExplanation() {
   const q = workingQuestions[currentIndex];
   const isCorrect = selectedIndex === q.answerIndex;
 
+  if (isCorrect) score++;
+
   result.innerHTML = `
     <div style="font-weight:900;font-size:16px;color:${isCorrect ? "#065f46" : "#991b1b"};">
       ${isCorrect ? "✅ Correto!" : "❌ Incorreto!"}
@@ -905,13 +2668,12 @@ function nextQuestion() {
 function finish() {
   stopTimer();
 
-  const total = workingQuestions.length;               // deve ser 50
-  const correct = score;                               // acertos
-  const maxScore = total * POINTS_PER_QUESTION;        // deve ser 1000
-  const scorePoints = correct * POINTS_PER_QUESTION;   // 0..1000
+  const total = workingQuestions.length;
+  const correct = score;
+  const scorePoints = Math.round(correct * pointsPerQuestion);
   const approved = scorePoints >= PASSING_SCORE;
 
-  const neededCorrect = Math.ceil(PASSING_SCORE / POINTS_PER_QUESTION); // 35
+  const neededCorrect = Math.ceil(PASSING_SCORE / pointsPerQuestion);
   const percent = total ? Math.round((correct / total) * 100) : 0;
 
   // Limpa a área das questões para ficar elegante
@@ -938,7 +2700,7 @@ function finish() {
           <h2 style="margin:0;color:#111827;">Resultado</h2>
           <p style="margin-top:10px;color:#374151;line-height:1.6;">
             <strong>Acertos:</strong> ${correct} de ${total}<br>
-            <strong>Pontuação:</strong> ${scorePoints} / ${maxScore}<br>
+            <strong>Pontuação:</strong> ${scorePoints} / ${MAX_SCORE}<br>
             <strong>Corte:</strong> ${PASSING_SCORE} (mínimo)<br>
             <strong>Status:</strong> ${approved ? "Aprovado" : "Reprovado"}<br>
             <strong>Percentual:</strong> ${percent}%
@@ -958,11 +2720,11 @@ function finish() {
       <div style="font-weight:900; font-size:16px; margin-bottom:8px;">📚 Simulado finalizado!</div>
 
       <div style="margin-top:10px; color:#374151; line-height:1.6;">
-        Você concluiu o modo <strong>Simulado</strong>.
+        Você concluiu o modo <strong>Simulado</strong> com <strong>${total}</strong> questões.
         <br><br>
         <strong>Seu desempenho (referência):</strong><br>
         Acertos: <strong>${correct}</strong> de ${total}<br>
-        Pontuação: <strong>${scorePoints}</strong> / ${maxScore}<br>
+        Pontuação: <strong>${scorePoints}</strong> / ${MAX_SCORE}<br>
         Corte para aprovação: <strong>${PASSING_SCORE}</strong> (≈ ${neededCorrect} acertos)
       </div>
 
@@ -986,13 +2748,13 @@ function finish() {
 
     <div style="margin-top:10px; color:#374151; line-height:1.6;">
       <strong>Acertos:</strong> ${correct} de ${total}<br>
-      <strong>Pontuação:</strong> ${scorePoints} / ${maxScore}<br>
+      <strong>Pontuação:</strong> ${scorePoints} / ${MAX_SCORE}<br>
       <strong>Corte:</strong> ${PASSING_SCORE} pontos (mínimo)<br>
       <strong>Percentual:</strong> ${percent}%
     </div>
 
     <div style="margin-top:12px; padding:12px; border-radius:14px; background:#f3f4f6; color:#111827;">
-      <strong>Para passar:</strong> você precisa de pelo menos <strong>${neededCorrect}</strong> acertos.
+      <strong>Para passar:</strong> você precisa de pelo menos <strong>${neededCorrect}</strong> acertos de ${total}.
     </div>
   `;
 

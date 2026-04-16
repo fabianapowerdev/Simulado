@@ -27,9 +27,9 @@
 
   /* Bordas e Sombras (Soft & Round) */
   --border-color: #d9e2ec;
-  --radius-sm: 8px; /* Arredondamento suave para botões */
-  --radius-md: 16px; /* Arredondamento elegante para cards */
-  --radius-lg: 24px; /* Arredondamento para modais */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
   
   /* Sombras Projetadas (Efeito de Elevação Suave) */
   --shadow-sm: 0 4px 6px rgba(16, 42, 67, 0.05);
@@ -37,7 +37,7 @@
   --shadow-lg: 0 20px 40px rgba(16, 42, 67, 0.12);
 
   /* Layout */
-  --max-width: 960px; /* Um pouco mais largo para respiro */
+  --max-width: 960px;
   --spacing-xl: 48px;
 }
 
@@ -83,7 +83,7 @@ button, .link-btn {
   font-weight: 600;
   padding: 12px 32px;
   cursor: pointer;
-  border-radius: 30px; /* Botões pílula = super moderno */
+  border-radius: 30px;
   border: 2px solid transparent;
   transition: all 0.25s ease;
   text-decoration: none;
@@ -155,6 +155,61 @@ button, .link-btn {
 }
 
 /* ============================
+   SELETOR DE QUANTIDADE (HOME)
+============================ */
+.qty-section {
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+.qty-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 20px;
+}
+
+.qty-grid {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.qty-btn {
+  background: white;
+  color: var(--text-main);
+  border: 2px solid var(--border-color);
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-width: 80px;
+}
+
+.qty-btn:hover {
+  border-color: var(--brand-primary);
+  background: var(--brand-secondary);
+  color: var(--brand-primary);
+}
+
+.qty-btn.active {
+  background: var(--brand-primary);
+  color: white;
+  border-color: var(--brand-primary);
+  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.25);
+  transform: translateY(-2px);
+}
+
+.qty-hint {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ============================
    QUESTÕES (OPÇÕES) - Clean & Interactive
 ============================ */
 .question-card {
@@ -166,7 +221,6 @@ button, .link-btn {
   margin-bottom: 24px;
 }
 
-/* Estilizando as opções que o JS provavelmente gera dentro do container */
 .option-btn {
   display: block;
   width: 100%;
@@ -200,7 +254,7 @@ button, .link-btn {
   color: #fff;
   display: inline-flex;
   padding: 8px 20px;
-  font-family: 'Inter', sans-serif; /* Usando Inter para um visual moderno */
+  font-family: 'Inter', sans-serif;
   font-weight: 700;
   font-size: 20px;
   margin-bottom: 24px;
@@ -215,13 +269,13 @@ button, .link-btn {
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(16, 42, 67, 0.6); /* Azul escuro translúcido */
+  background: rgba(16, 42, 67, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 24px;
-  backdrop-filter: blur(4px); /* Efeito de vidro borrado ao fundo */
+  backdrop-filter: blur(4px);
 }
 
 .modal.hidden { display: none; }
@@ -291,4 +345,6 @@ footer {
   .card-btn { padding: 32px; }
   h1 { font-size: 28px; }
   .subtitle { font-size: 16px; }
+  .qty-grid { gap: 10px; }
+  .qty-btn { padding: 10px 20px; font-size: 14px; min-width: 60px; }
 }

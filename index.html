@@ -13,17 +13,28 @@
     <p class="subtitle">
       Este projeto é um <strong>simulado interativo</strong> criado para apoiar os estudos da certificação
       <strong>Microsoft Copilot &amp; Agent Administration Fundamentals (AB‑900)</strong>.
-      <br><br>
-      
     </p>
 
+    <!-- SELETOR DE QUANTIDADE -->
+    <section class="qty-section">
+      <h2 class="qty-title">Quantas questões deseja responder?</h2>
+      <div class="qty-grid">
+        <button class="qty-btn" data-qty="20" onclick="selectQty(20)">20</button>
+        <button class="qty-btn" data-qty="40" onclick="selectQty(40)">40</button>
+        <button class="qty-btn active" data-qty="50" onclick="selectQty(50)">50</button>
+        <button class="qty-btn" data-qty="100" onclick="selectQty(100)">100</button>
+        <button class="qty-btn" data-qty="0" onclick="selectQty(0)">Todas</button>
+      </div>
+      <p class="qty-hint">💡 Recomendado: <strong>50 questões</strong> para simular a prova real</p>
+    </section>
+
     <section class="card-grid">
-      <a class="card-btn" href="simulado.html">
+      <a class="card-btn" id="linkSimulado" href="simulado.html?qty=50">
         📚 Modo Simulado
         <span>Estude com explicações</span>
       </a>
 
-      <a class="card-btn" href="prova.html">
+      <a class="card-btn" id="linkProva" href="prova.html?qty=50">
         📝 Modo Prova
         <span>Teste seus conhecimentos</span>
       </a>
@@ -33,5 +44,16 @@
   <footer>
      <strong>Este simulador foi criado com apoio do Microsoft Copilot como ferramenta de geração de conteúdo educacional.</strong>
   </footer>
+
+  <script>
+    function selectQty(qty) {
+      document.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.qty) === qty);
+      });
+      var param = qty === 0 ? '' : '?qty=' + qty;
+      document.getElementById('linkSimulado').href = 'simulado.html' + param;
+      document.getElementById('linkProva').href = 'prova.html' + param;
+    }
+  </script>
 </body>
 </html>
