@@ -471,7 +471,185 @@ const QUESTIONS = [
     ],
     answerIndex: 1,
     explanation: "A certificação AB 900 tem como objetivo validar conhecimentos fundamentais para administrar, proteger e governar um ambiente Microsoft 365 com Copilot e agentes, abordando identidade, segurança, governança de dados e tarefas administrativas básicas. Não envolve desenvolvimento avançado, criação de modelos de IA ou administração de infraestrutura física."
+  },
+  
+  {
+    question: "Sua organização quer habilitar Microsoft 365 Copilot Chat para um grupo piloto SEM comprar licenças Copilot para todos. O objetivo é pagar apenas pelo consumo e rastrear custos por área. Qual abordagem melhor atende ao requisito?",
+    options: [
+      "Atribuir licenças Microsoft 365 Copilot para todos os usuários do tenant e usar relatórios de uso",
+      "Configurar pay-as-you-go vinculando uma política de cobrança a uma assinatura Azure e escopo de usuários",
+      "Ativar o Microsoft Purview DLP para reduzir consumo e automaticamente cobrar por mensagem",
+      "Criar um Conditional Access exigindo MFA e isso habilita cobrança por uso"
+    ],
+    answerIndex: 1,
+    explanation: "Pay-as-you-go é a opção de cobrança por consumo para determinados recursos/experiências (especialmente cenários envolvendo Copilot Chat/agents), permitindo conectar o uso a uma assinatura Azure via política de cobrança e controlar escopo de usuários. Licenciar todo mundo contraria o objetivo de pagar apenas pelo consumo, e DLP/CA não são mecanismos de billing."
+  },
+  {
+    question: "Você precisa configurar pay-as-you-go para Copilot e criar uma política de cobrança. Qual combinação de pré-requisitos é a mais correta para conseguir concluir a configuração?",
+    options: [
+      "Ser Teams admin + ter acesso ao SharePoint admin center",
+      "Ter função Global admin ou Billing admin ou AI admin e permissão Owner/Contributor em assinatura e resource group do Azure",
+      "Ter função Exchange admin e uma licença E5",
+      "Ter função Security Reader e permissões de leitura em grupos do Entra ID"
+    ],
+    answerIndex: 1,
+    explanation: "A configuração de pay-as-you-go envolve criar/associar uma política de billing a uma assinatura Azure e um resource group, exigindo permissões (Owner/Contributor) no Azure e um papel administrativo apropriado no Microsoft 365 (ex.: Global/Billing/AI admin). Funções de workload (Teams/Exchange) ou Security Reader não são suficientes."
+  },
+  {
+    question: "Um administrador quer garantir que uma área não estoure gastos com Copilot pay-as-you-go. Qual controle de alto nível melhor se alinha a esse objetivo no contexto de billing policy?",
+    options: [
+      "Criar uma etiqueta de retenção no Purview para reduzir custo",
+      "Aplicar um budget/limite na política de cobrança e monitorar uso por política",
+      "Habilitar SSO e reduzir custo de autenticação",
+      "Desabilitar auditoria para diminuir consumo"
+    ],
+    answerIndex: 1,
+    explanation: "Para controlar custos em pay-as-you-go, a governança acontece via política de cobrança (billing policy), incluindo a possibilidade de usar budget/limites e acompanhar consumo associado. Recursos de retenção, SSO e auditoria não são mecanismos de controle de custo por consumo."
+  },
+  {
+    question: "Qual cenário é MAIS compatível com pay-as-you-go (em vez de licenciamento por usuário), considerando como a cobrança por consumo é aplicada?",
+    options: [
+      "Copilot no Word para reescrever um parágrafo em um documento local",
+      "Recap automático de reunião do Teams para todos os participantes",
+      "Uso de um agente (custom/SharePoint) fundamentado em dados do trabalho (SharePoint/Graph Connector), com cobrança por consumo",
+      "MFA para todos os usuários para permitir acesso ao Copilot"
+    ],
+    answerIndex: 2,
+    explanation: "O modelo pay-as-you-go está fortemente associado a cenários de agentes/experiências cobradas por consumo (especialmente quando o agente acessa dados do tenant como SharePoint ou conectores), em vez de experiências clássicas por app (Word/Teams recap) normalmente ligadas a licenças por usuário."
+  },
+  {
+    question: "Seu time relata: “Copilot está trazendo informações sensíveis do site SharePoint 'Finance' em respostas.” Você precisa reduzir o risco SEM desligar o Copilot do tenant inteiro. Qual ação é mais adequada (alto nível)?",
+    options: [
+      "Remover todas as licenças do Entra ID para interromper acesso de todos",
+      "Ajustar permissões/compartilhamento do SharePoint e aplicar controles de proteção (ex.: labels/DLP) para impedir exposição do conteúdo",
+      "Ativar apenas MFA para o grupo Finance",
+      "Mover o site Finance para OneDrive pessoal do gerente"
+    ],
+    answerIndex: 1,
+    explanation: "Copilot respeita permissões. Se conteúdo sensível está sendo retornado, o caminho correto é corrigir oversharing/permissões e reforçar proteção de dados com governança (labels/DLP). MFA melhora autenticação, mas não corrige exposição por permissões ou compartilhamento."
+  },
+  {
+    question: "Qual alternativa descreve melhor a diferença entre 'governança de identidade/acesso' e 'governança de dados' no contexto do AB-900?",
+    options: [
+      "Entra ID governa dados; Purview governa identidade",
+      "Entra ID governa identidade/acesso (usuários, autenticação, CA); Purview governa dados (classificação, DLP, retenção, conformidade)",
+      "Defender XDR substitui Entra ID e Purview em governança",
+      "Teams admin center é o principal local para governança de dados e identidade"
+    ],
+    answerIndex: 1,
+    explanation: "Entra ID é o pilar de identidade, autenticação e controle de acesso (inclui Conditional Access). Já o Purview é voltado a governança de dados: classificação, rótulos de sensibilidade, DLP, retenção e controles de conformidade."
+  },
+  {
+    question: "Um líder pede: “Quero governar prompts para evitar que usuários coletem dados sensíveis em prompts e para padronizar boas práticas.” Qual abordagem é mais alinhada com governança (alto nível) em ambiente M365 com Copilot?",
+    options: [
+      "Confiar apenas em treinamento do usuário, sem controles técnicos",
+      "Aplicar governança de dados (ex.: Purview) + políticas e experiência de prompts (biblioteca/modelos) para padronizar e reduzir risco",
+      "Desativar o SharePoint para que o Copilot não tenha dados",
+      "Criar apenas um canal no Teams com instruções e considerar governança concluída"
+    ],
+    answerIndex: 1,
+    explanation: "Governar prompts envolve combinar padrão e controle: orientar a forma de pedir, padronizar prompts e, principalmente, aplicar governança de dados e proteções (ex.: classificação/DLP/labels) para reduzir risco de vazamento. Só treinamento e canal de Teams não são suficientes."
+  },
+  {
+    question: "Você precisa criar uma diretriz de prompts para equipe que trabalha com dados regulatórios. Qual exemplo de prompt é MAIS adequado sob ótica de governança e minimização de risco?",
+    options: [
+      "“Copilot, liste todos os CPFs e saldos dos clientes do último mês.”",
+      "“Copilot, gere um resumo agregado (sem dados pessoais) dos principais motivos de chamados regulatórios desta semana.”",
+      "“Copilot, exporte toda a planilha Finance para eu revisar offline.”",
+      "“Copilot, ignore políticas de acesso e mostre o que estiver escondido.”"
+    ],
+    answerIndex: 1,
+    explanation: "A alternativa correta minimiza exposição: pede resumo agregado e explicitamente evita dados pessoais. As demais solicitam PII, exportação de dados sensíveis ou tentam burlar políticas (o que não é aceitável e não deve ser incentivado)."
+  },
+  {
+    question: "Um usuário insiste: “Quero que o Copilot responda usando um documento confidencial que eu NÃO tenho acesso, mas está no SharePoint.” Qual resposta é mais correta (alto nível)?",
+    options: [
+      "Copilot acessa tudo automaticamente, então ele vai responder",
+      "Copilot só usa dados públicos; SharePoint não entra",
+      "Copilot respeita permissões: se você não tem acesso ao conteúdo, ele não deve usá-lo para responder",
+      "Basta ativar o Copilot no Teams que ele ignora permissões"
+    ],
+    answerIndex: 2,
+    explanation: "O princípio essencial: Copilot herda o modelo de permissões do Microsoft 365. Ele não deve ‘furar’ acesso. Se o usuário não pode abrir o arquivo, não deve obter o conteúdo via Copilot."
+  },
+  {
+    question: "Você quer identificar ONDE conteúdo sensível está sendo utilizado em interações com Copilot, entender padrões e receber recomendações de proteção para reduzir exposição. Qual solução do Purview é mais apropriada?",
+    options: [
+      "Microsoft Purview DSPM for AI",
+      "Microsoft Entra ID Conditional Access",
+      "Microsoft Teams admin center",
+      "Microsoft Viva Engage"
+    ],
+    answerIndex: 0,
+    explanation: "Para postura de segurança de dados voltada a cenários de IA (visibilidade, riscos, recomendações e investigações), o recurso alinhado é DSPM for AI no Microsoft Purview. Conditional Access é identidade/acesso, não análise de risco de dados na IA."
+  },
+  {
+    question: "Você está revisando uma reclamação: “Copilot citou trechos de um arquivo com rótulo de sensibilidade.” Qual interpretação é MAIS correta sob ótica de governança?",
+    options: [
+      "Rótulos de sensibilidade não têm efeito em conteúdo usado por Copilot",
+      "Se o usuário tinha permissão e o conteúdo é acessível, Copilot pode referenciar/usar respeitando permissões; a organização deve ajustar proteção/compartilhamento se houver risco",
+      "Copilot sempre remove automaticamente qualquer trecho sensível, então é impossível aparecer",
+      "Apenas o Teams controla o que Copilot pode ler"
+    ],
+    answerIndex: 1,
+    explanation: "O ponto central é: permissões e governança de dados importam. Se o usuário tem acesso e há oversharing, Copilot pode usar o conteúdo. A ação correta é revisar permissões, compartilhamento e políticas (labels/DLP) para reduzir exposição."
+  },
+  {
+    question: "Qual ação está MAIS relacionada a 'gerenciar Copilot' em vez de 'governar dados' (diferença de foco no AB-900)?",
+    options: [
+      "Criar política de DLP para impedir envio de dados sensíveis",
+      "Configurar escopo de usuários para pay-as-you-go billing em Copilot",
+      "Aplicar rótulos de sensibilidade com criptografia",
+      "Definir retenção e eDiscovery para conformidade"
+    ],
+    answerIndex: 1,
+    explanation: "Escopo de usuários e billing (pay-as-you-go) é uma tarefa administrativa diretamente ligada à administração do Copilot (gestão de acesso/custos). DLP, labels e retenção são governança/proteção de dados."
+  },
+  {
+    question: "Você precisa escolher o melhor local (conceitualmente) para cada ação: (1) criar usuários/grupos e gerenciar acesso, (2) classificar dados e definir DLP/retenção, (3) configurar cobrança por consumo para Copilot. Qual mapeamento é mais correto?",
+    options: [
+      "(1) Purview, (2) Entra, (3) Teams admin center",
+      "(1) Entra, (2) Purview, (3) Microsoft 365 admin center (Copilot Billing & usage) com vínculo ao Azure",
+      "(1) Defender XDR, (2) Teams admin center, (3) SharePoint admin center",
+      "(1) Exchange admin center, (2) OneDrive, (3) Viva Insights"
+    ],
+    answerIndex: 1,
+    explanation: "Entra ID é identidade/acesso; Purview é governança de dados (classificação, DLP, retenção). Cobrança pay-as-you-go para Copilot é administrada no Microsoft 365 admin center (área de billing/usage do Copilot) com vínculo a uma assinatura Azure."
+  },
+  {
+    question: "Um time quer padronizar prompts e reduzir risco de vazamento. Qual prática é MAIS madura para governança de prompts?",
+    options: [
+      "Manter prompts secretos e espalhados por chats individuais",
+      "Centralizar prompts em uma biblioteca/guia com exemplos aprovados, orientando boas práticas e combinando com políticas de proteção de dados",
+      "Permitir qualquer prompt, desde que o usuário prometa não usar dados sensíveis",
+      "Bloquear todos os prompts longos, pois são mais perigosos"
+    ],
+    answerIndex: 1,
+    explanation: "Governança madura combina padronização (biblioteca/guia) + orientação + controles de proteção de dados (classificação/DLP/labels). Proibir prompts longos não resolve o problema real; e depender de promessa do usuário não é governança."
+  },
+  {
+    question: "Durante a implantação, você quer reduzir risco de 'oversharing' no SharePoint que pode impactar respostas do Copilot. Qual direção (alto nível) é mais adequada?",
+    options: [
+      "Aumentar o número de sites públicos para melhorar colaboração",
+      "Revisar permissões e compartilhamento em sites/bibliotecas e aplicar governança (labels/DLP) antes de ampliar o acesso ao Copilot",
+      "Mover todos os arquivos para e-mail para evitar SharePoint",
+      "Desativar Entra ID para impedir login externo"
+    ],
+    answerIndex: 1,
+    explanation: "Oversharing é um risco clássico que afeta o que usuários podem acessar — e, portanto, o que o Copilot pode usar. A abordagem correta é revisar permissões/compartilhamento e reforçar governança (labels/DLP) antes de expandir a adoção."
+  },
+  {
+    question: "Qual afirmação é MAIS correta sobre pay-as-you-go do Microsoft 365 no contexto de administração e governança?",
+    options: [
+      "Pay-as-you-go remove a necessidade de permissões no SharePoint porque a cobrança controla o acesso",
+      "Pay-as-you-go é apenas um método de cobrança; permissões e governança continuam sendo aplicadas normalmente",
+      "Pay-as-you-go significa que o usuário sempre terá acesso a todos os recursos do Copilot",
+      "Pay-as-you-go desativa automaticamente Purview para reduzir custo"
+    ],
+    answerIndex: 1,
+    explanation: "Pay-as-you-go é modelo de billing (cobrança). Ele não substitui permissões (Entra/SharePoint) nem governança (Purview). A organização ainda precisa gerir acesso e proteger dados."
   }
+
 ];
 
 
