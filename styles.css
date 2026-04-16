@@ -4,39 +4,32 @@
    DESIGN TOKENS (Modern & Professional)
 ============================ */
 :root {
-  /* Cores de Marca (Vibrantes e Amigáveis) */
-  --brand-primary: #1a73e8; /* Azul moderno, estilo Google/SaaS */
+  --brand-primary: #1a73e8;
   --brand-primary-hover: #1557b0;
-  --brand-secondary: #e8f0fe; /* Azul claríssimo para fundos/hovers */
+  --brand-secondary: #e8f0fe;
 
-  /* Cores de Fundo (Profundidade e Vida) */
-  --bg-page: #f0f4f8; /* Cinza-azulado muito claro */
+  --bg-page: #f0f4f8;
   --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
   --bg-card: #ffffff;
   --bg-header: #ffffff;
 
-  /* Cores de Texto (Leitura Confortável) */
-  --text-main: #102a43; /* Azul escuro, menos agressivo que preto */
+  --text-main: #102a43;
   --text-muted: #627d98;
   --text-inverse: #ffffff;
 
-  /* Cores de Estado (Acessíveis) */
   --state-success: #198754;
   --state-danger: #d93025;
   --state-warning: #f9ab00;
 
-  /* Bordas e Sombras (Soft & Round) */
   --border-color: #d9e2ec;
   --radius-sm: 8px;
   --radius-md: 16px;
   --radius-lg: 24px;
-  
-  /* Sombras Projetadas (Efeito de Elevação Suave) */
+
   --shadow-sm: 0 4px 6px rgba(16, 42, 67, 0.05);
   --shadow-md: 0 10px 20px rgba(16, 42, 67, 0.08);
   --shadow-lg: 0 20px 40px rgba(16, 42, 67, 0.12);
 
-  /* Layout */
   --max-width: 960px;
   --spacing-xl: 48px;
 }
@@ -66,18 +59,45 @@ body {
 .center { text-align: center; }
 
 /* ============================
-   TIPOGRAFIA (Hierarquia Clara)
+   TIPOGRAFIA
 ============================ */
-h1 { font-size: 36px; font-weight: 800; color: #102a43; margin-bottom: 16px; letter-spacing: -0.5px; }
-h2 { font-size: 28px; font-weight: 700; color: #102a43; margin-bottom: 12px; }
-.subtitle { color: var(--text-muted); font-size: 18px; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto; }
+h1 {
+  font-size: 36px;
+  font-weight: 800;
+  color: #102a43;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #102a43;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 18px;
+  margin-bottom: 40px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 /* ============================
-   BOTÕES & AÇÕES (Arredondados e Vivos)
+   BOTÕES & AÇÕES
 ============================ */
-.actions { display: flex; gap: 16px; margin-top: 32px; justify-content: center; flex-wrap: wrap; }
+.actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
 
-button, .link-btn {
+button,
+.link-btn {
   font-family: inherit;
   font-size: 15px;
   font-weight: 600;
@@ -93,17 +113,41 @@ button, .link-btn {
   letter-spacing: 0.2px;
 }
 
-.primary { background: var(--brand-primary); color: white; box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2); }
-.primary:hover { background: var(--brand-primary-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(26, 115, 232, 0.3); }
+.primary {
+  background: var(--brand-primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+}
 
-.ghost { background: white; color: var(--brand-primary); border-color: var(--brand-primary); }
-.ghost:hover { background: var(--brand-secondary); }
+.primary:hover {
+  background: var(--brand-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(26, 115, 232, 0.3);
+}
 
-.link-btn { background: #e0e6ed; color: #102a43; font-size: 14px; padding: 10px 24px; }
-.link-btn:hover { background: #cedbe9; }
+.ghost {
+  background: white;
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.ghost:hover {
+  background: var(--brand-secondary);
+}
+
+.link-btn {
+  background: #e0e6ed;
+  color: #102a43;
+  font-size: 14px;
+  padding: 10px 24px;
+}
+
+.link-btn:hover {
+  background: #cedbe9;
+}
 
 /* ============================
-   GRID DE MODOS (HOME) - Elegant Cards
+   GRID DE MODOS (HOME)
 ============================ */
 .card-grid {
   display: grid;
@@ -131,9 +175,12 @@ button, .link-btn {
 }
 
 .card-btn::after {
-  content: '';
+  content: "";
   position: absolute;
-  bottom: 0; left: 0; width: 100%; height: 4px;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
   background: var(--brand-primary);
   transform: scaleX(0);
   transition: transform 0.3s ease;
@@ -145,7 +192,9 @@ button, .link-btn {
   border-color: var(--brand-primary);
 }
 
-.card-btn:hover::after { transform: scaleX(1); }
+.card-btn:hover::after {
+  transform: scaleX(1);
+}
 
 .card-btn span {
   font-weight: 400;
@@ -159,13 +208,11 @@ button, .link-btn {
 ============================ */
 .qty-section {
   margin-top: 8px;
-  margin-bottom: 0;
 }
 
 .qty-title {
   font-size: 20px;
   font-weight: 700;
-  color: var(--text-main);
   margin-bottom: 20px;
 }
 
@@ -189,12 +236,14 @@ button, .link-btn {
   min-width: 80px;
 }
 
-.qty-btn:hover {
+/* ✅ hover NÃO sobrescreve active */
+.qty-btn:hover:not(.active) {
   border-color: var(--brand-primary);
   background: var(--brand-secondary);
   color: var(--brand-primary);
 }
 
+/* ✅ estado ativo corrigido */
 .qty-btn.active {
   background: var(--brand-primary);
   color: white;
@@ -210,17 +259,8 @@ button, .link-btn {
 }
 
 /* ============================
-   QUESTÕES (OPÇÕES) - Clean & Interactive
+   QUESTÕES
 ============================ */
-.question-card {
-  background: white;
-  padding: 32px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-md);
-  margin-bottom: 24px;
-}
-
 .option-btn {
   display: block;
   width: 100%;
@@ -233,38 +273,29 @@ button, .link-btn {
   font-size: 16px;
   border-radius: var(--radius-sm);
   transition: all 0.2s ease;
-  position: relative;
 }
 
-.option-btn:hover { border-color: var(--brand-primary); background: #f8faff; }
-
-.option-btn.selected {
+.option-btn:hover {
   border-color: var(--brand-primary);
-  background: #f1f8ff;
-  border-width: 2px;
-  font-weight: 600;
-  color: var(--brand-primary);
+  background: #f8faff;
 }
 
 /* ============================
-   TIMER & STATUS - Modern Digital
+   TIMER
 ============================ */
 .timer {
   background: #102a43;
   color: #fff;
-  display: inline-flex;
   padding: 8px 20px;
-  font-family: 'Inter', sans-serif;
   font-weight: 700;
   font-size: 20px;
   margin-bottom: 24px;
   border-radius: 40px;
   box-shadow: 0 4px 12px rgba(16, 42, 67, 0.2);
-  letter-spacing: 1px;
 }
 
 /* ============================
-   MODAL (RESULTADO) - Soft & Centered
+   MODAL
 ============================ */
 .modal {
   position: fixed;
@@ -278,7 +309,9 @@ button, .link-btn {
   backdrop-filter: blur(4px);
 }
 
-.modal.hidden { display: none; }
+.modal.hidden {
+  display: none;
+}
 
 .modal-card {
   background: white;
@@ -286,41 +319,18 @@ button, .link-btn {
   max-width: 520px;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  overflow: hidden;
-  animation: modalIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-@keyframes modalIn {
-  from { transform: translateY(30px) scale(0.95); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
-}
-
-.modal-header {
-  padding: 20px 32px;
-  background: #f8faff;
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-title { font-size: 20px; font-weight: 800; color: #102a43; }
-
-.modal-body { padding: 40px 32px; text-align: center; }
-
+.modal-header,
 .modal-actions {
   padding: 20px 32px;
   background: #f8faff;
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  border-top: 1px solid var(--border-color);
 }
 
-.modal-close {
-  background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); transition: color 0.2s;
+.modal-body {
+  padding: 40px 32px;
+  text-align: center;
 }
-.modal-close:hover { color: var(--brand-primary); }
 
 /* ============================
    FOOTER
@@ -335,16 +345,47 @@ footer {
   background: rgba(255,255,255,0.5);
 }
 
-/* UTILIDADES */
+/* ============================
+   UTILIDADES
+============================ */
 .hidden { display: none; }
-.card { background: white; padding: 24px; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
 
-/* RESPONSIVO */
+.card {
+  background: white;
+  padding: 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================
+   RESPONSIVO
+============================ */
 @media (max-width: 600px) {
-  .card-grid { grid-template-columns: 1fr; gap: 24px; }
-  .card-btn { padding: 32px; }
-  h1 { font-size: 28px; }
-  .subtitle { font-size: 16px; }
-  .qty-grid { gap: 10px; }
-  .qty-btn { padding: 10px 20px; font-size: 14px; min-width: 60px; }
+  .card-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .card-btn {
+    padding: 32px;
+  }
+
+  h1 {
+    font-size: 28px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .qty-grid {
+    gap: 10px;
+  }
+
+  .qty-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    min-width: 60px;
+  }
 }
